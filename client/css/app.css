@@ -1,0 +1,159 @@
+.toast-title {
+    font-size: 14px;
+}
+
+.toast-message {
+    font-size: 14px;
+}
+
+.sortable {
+    cursor: pointer;
+}
+
+.fileTable tr th span {
+    font-size: 12px;
+    margin-left: 8px;
+}
+.fileTable tr th:hover{
+    background-color: rgba(0,0,0,.075);
+}
+
+li.highlighted{
+    background-color: #f4a4a4;
+}
+span.searched{
+    background-color: yellow;
+}
+.folder{
+    color: #094AB2;
+}
+.text{
+    color: gray;
+}
+.pdf{
+    color: #D90200;
+}
+.code{
+    color: black;
+}
+.archive{
+    color: #094AB2;
+}
+.word{
+    color: #2B5797;
+}
+.ppt{
+    color: #D04727;
+}
+.excel{
+    color: #1F7246;
+}
+.file{
+    color: silver;
+}
+.audio{
+    color: #679BE6;
+}
+.image{
+    color: #FC6351;
+}
+.movie{
+    color: #C1253D;
+}
+.navbar li{
+    margin-right: 16px;
+    cursor: pointer;
+    padding-top: 4px;
+    padding-bottom: 4px;
+}
+
+.breadcrumb-item+.breadcrumb-item::before{
+    content: ">";
+}
+
+.mainMenu .navbar-nav .nav-link{
+    padding: 0px;
+}
+.mainMenu .navbar > ul > li{
+    margin-right: 0px;
+    padding: 0px;
+}
+
+
+/*Stream modal css properties*/
+.streamForm{
+    color: black;
+    min-width: 154px;
+}
+.streamForm .form-group{
+    margin-bottom: 0px;
+}
+
+
+.myModal .modal-dialog.expand {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    max-width: 100%;
+}
+
+.myModal .modal-dialog.expand .modal-content{
+    min-height: 100%;
+    border-radius: 0;
+}
+
+.myModal .modal-header .nav-link {
+    margin-top: 6px;
+    font-size: 1.1rem;
+    padding: 0px;
+}
+
+.stream .modal-body ul {
+    list-style: none;
+    padding-left: 0px;
+    font-size:14px;
+    line-height:1.5;
+    font-family: 'Merriweather', Georgia, sans-serif;
+}
+
+.stream .modal-body ul li{
+    padding:0px 16px;
+}
+
+.scroll-glue{
+    overflow-y: auto;
+    border: none;
+    padding: 8px 0px;
+}
+
+#searchStream{
+    color:black;
+}
+
+#searchStream .row{
+    margin-bottom: 8px;
+}
+
+#searchStream .col-form-label {
+    padding-top: .25rem;
+    padding-bottom: .25rem;
+}
+
+.form-group.input-icon{
+    position: relative;
+}
+
+.form-group.input-icon span{
+    position: absolute;
+    top: 6px;
+    right: 18px;
+    font-size: 14px;
+    color: lightgray;
+}
+
+.form-group.input-icon input{
+    padding-right: 22px;
+}
+
+/*-------------------------------------------------------*/

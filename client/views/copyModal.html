@@ -1,0 +1,10 @@
+<div class="modal-header">
+    <h4>Copy</h4>
+</div>
+<div class="modal-body">
+    <label>New Name <input class="input-xlarge" ng-model="vm.FM.newName" placeholder={{vm.FM.selection[0].name}} /></label>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-default" ng-click="vm.no()">Cancel</button>
+    <button type="button" class="btn btn-primary" ng-disabled="!vm.FM.newName" ng-click="vm.yes();vm.FM.copy(vm.FM.newName)">OK</button>
+</div>

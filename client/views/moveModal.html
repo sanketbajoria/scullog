@@ -1,0 +1,10 @@
+<div class="modal-header">
+    <h4>Move</h4>
+</div>
+<div class="modal-body">
+    <label>Target?<input class="input-xlarge" ng-model="vm.FM.moveTarget" placeholder="{{vm.FM.curFolderPath}}" /></label>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-default" ng-click="vm.no()">Cancel</button>
+    <button type="button" class="btn btn-primary" ng-disabled="!vm.FM.moveTarget" ng-click="vm.yes();vm.FM.move(vm.FM.moveTarget)">OK</button>
+</div>

@@ -1,0 +1,11 @@
+<div class="modal-header">
+    <h4>New Folder</h4>
+</div>
+<div class="modal-body">
+    <p>Complete Path?{{vm.FM.curFolderPath + vm.FM.newFolderName + '/'}}</p>
+    <label>Folder Name <input class="input-xlarge" ng-model="vm.FM.newFolderName" /></label>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-default" ng-click="vm.no()">Cancel</button>
+    <button type="button" class="btn btn-primary" ng-disabled="!vm.FM.newFolderName" ng-click="vm.yes();vm.FM.createFolder(vm.FM.newFolderName)">OK</button>
+</div>

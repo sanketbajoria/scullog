@@ -1,0 +1,68 @@
+{
+  "name": "scullog",
+  "version": "0.0.1",
+  "description": "Scullog based on Node.js and Angular.js",
+  "main": "./server/index.js",
+  "scripts": {
+    "start": "node --harmony ./server/index.js"
+  },
+  "bin": {
+    "scullog": "../scullog/bin/scullog.sh"
+  },
+  "dependencies": {
+    "angular-file-saver": "^1.1.2",
+    "circular-buffer": "1.0.1",
+    "co": "^4.6.0",
+    "co-busboy": "1.3.1",
+    "co-exec": "^1.1.0",
+    "co-fs": "^1.2.0",
+    "co-fs-extra": "^1.1.0",
+    "co-views": "^2.1.0",
+    "cross-spawn": "^4.0.0",
+    "jsonwebtoken": "^7.1.9",
+    "koa": "^1.0.0",
+    "koa-bodyparser": "^2.0.1",
+    "koa-morgan": "^0.4.0",
+    "koa-mount": "^1.3.0",
+    "koa-request": "^1.0.0",
+    "koa-router": "^5.1.2",
+    "koa-static": "^2.0.0",
+    "mime-types": "2.1.11",
+    "socket.io": "1.4.8",
+    "tracer": "^0.8.0",
+    "validator": "5.5.0",
+    "yargs": "^5.0.0"
+  },
+  "optionalDependencies": {
+    "node-windows": "^0.1.11",
+    "winattr": "^1.1.0",
+    "node-linux": "^0.1.8",
+    "node-mac": "^0.1.4"
+  },
+  "os": [
+    "darwin",
+    "win32",
+    "linux"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sanketbajoria/scullog.git"
+  },
+  "keywords": [
+    "files",
+    "manager",
+    "koa",
+    "angular",
+    "web",
+    "server"
+  ],
+  "author": {
+    "name": "Sanket Bajoria",
+    "email": "bajoriasanket@gmail.com"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/sanketbajoria/scullog/issues"
+  },
+  "homepage": "https://github.com/sanketbajoria/scullog#readme"
+}

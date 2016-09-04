@@ -1,0 +1,14 @@
+<form class="streamForm">
+    <div class="form-group row">
+        <label for="lastLines" class="col-sm-5 col-form-label" style="padding-top:0px;padding-bottom:1rem;">Last n lines</label>
+        <div class="col-sm-7">
+            <input type="text" class="form-control form-control-sm" ng-model="FM.lastLines" id="lastLines">
+        </div>
+    </div>
+    <div class="form-group row">
+        <div class="col-sm-12">
+            <button type="button" class="btn btn-primary btn-sm pull-right" ng-click="FM.stream(); FM.showPopover=false;"><span class="fa fa-feed"></span> Stream</button>
+            <button type="button" style="margin-right: 6px;" class="btn btn-secondary btn-sm pull-right" ng-click="FM.partialDownload(); FM.showPopover=false;"><span class="fa fa-download"></span> Download</button>
+        </div>
+    </div>
+</form>

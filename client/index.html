@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="FMApp">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>File Manager</title>
+
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.3/css/bootstrap.min.css" integrity="sha384-MIwDKRSSImVFAZCVLtU0LMDdON6KVCrZHyVQQj6e8wIEJkW4tvwqXrbMIya1vriY" crossorigin="anonymous">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/angular-loading-bar/0.9.0/loading-bar.min.css">
+  <link rel="stylesheet" href="//npmcdn.com/angular-toastr/dist/angular-toastr.css">
+  <link rel="stylesheet" href="css/app.css">
+
+  <script src="//code.jquery.com/jquery-2.2.4.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.8/angular.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/angular-loading-bar/0.9.0/loading-bar.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/2.0.1/ui-bootstrap.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/2.0.1/ui-bootstrap-tpls.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.8/socket.io.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/angularjs-scroll-glue/2.0.7/scrollglue.min.js"></script>
+  <script src="//npmcdn.com/angular-toastr/dist/angular-toastr.tpls.js"></script>
+  <script src="angular-file-saver/dist/angular-file-saver.bundle.min.js"></script>
+  <script src="js/services/contextMenu.js"></script>
+  <script src="js/index.js"></script>
+  <script src="js/controllers/mainCtrl.js"></script>
+  <script src="js/controllers/modalCtrl.js"></script>
+  <script src="js/directives/angular-file.js"></script>
+  <script src="js/filters/filters.js"></script>
+  <script src="js/services/basePath.js"></script>
+  <script src="js/services/PermissionFactory.js"></script>
+  <script src="js/services/authInterceptor.js"></script>
+  <script src="js/services/iconFinder.js"></script>
+  <script src="js/services/FileDownloader.js"></script>
+  <script src="js/services/serviceFactory.js"></script>
+  <script src="js/services/Favorite.js"></script>
+
+
+</head>
+
+<body ng-controller="FileManagerCtr as FM" ng-cloak ng-hide="!FM.initialized">
+
+
+  <div class="container mainMenu" style="padding:0px;">
+    <nav class="navbar">
+      <ul class="nav navbar-nav">
+        <li class="nav-item active">
+          <a class="nav-link navbar-brand" href="#">Enhanced File Manager <span class="sr-only">(current)</span></a>
+        </li>
+        <li class="nav-item pull-xs-right" ng-hide="FM.hideBtn('service')" ng-click="FM.service()">
+          <a class="nav-link" href=""><span class="fa fa-cog"></span> Service</a>
+        </li>
+        <li class="nav-item pull-xs-right">
+          <a class="nav-link" href="" uib-dropdown class="dropdown" ng-hide="FM.hideBtn('settings')">
+            <span class="dropdown-toggle" data-toggle="dropdown" uib-dropdown-toggle><span class="fa fa-cogs"></span> Settings</span>
+            <ul class="dropdown-menu" uib-dropdown-menu>
+              <li class="dropdown-item" ng-click="FM.restartFM()">Restart Server</li>
+              <li class="dropdown-item" ng-click="FM.updateFM()">Update Server</li>
+            </ul>
+          </a>
+        </li>
+        <li class="nav-item pull-xs-right">
+          <a class="nav-link" href="" uib-dropdown class="dropdown" ng-hide="FM.hideBtn('favorite')">
+            <span class="dropdown-toggle" data-toggle="dropdown" uib-dropdown-toggle><span class="fa fa-heart"></span> Favorites</span>
+            <ul class="dropdown-menu" uib-dropdown-menu>
+              <li class="dropdown-item" ng-click="FM.curPath(p)" ng-repeat="(p,n) in FM.favorites()">{{n}}</li>
+            </ul>
+          </a>
+        </li>
+        <li class="nav-item pull-xs-right">
+          <a class="nav-link" href="" uib-dropdown class="dropdown" ng-hide="FM.hideBtn('change_base')">
+            <span class="dropdown-toggle" data-toggle="dropdown" uib-dropdown-toggle><span class="fa fa-edit"></span> Base ({{FM.BasePath.activePath()}})</span>
+            <ul class="dropdown-menu" uib-dropdown-menu>
+              <li class="dropdown-item" ng-click="FM.BasePath.activePath(path);" ng-repeat="path in FM.BasePath.getPaths() track by path">{{::path}}</li>
+            </ul>
+          </a>
+        </li>
+        <li class="nav-item pull-xs-right" ng-hide="FM.hideBtn('privilege')" popover-is-open="FM.showEditPopover" popover-trigger="'outsideClick'"  popover-placement="bottom-right" uib-popover-template="'views/privilegeForm.html'">
+          <a class="nav-link" href=""><span class="fa fa-unlock-alt"></span> Privilege</a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+
+
+
+
+  <div class="container">
+  <nav class="navbar navbar-dark bg-primary" style="font-size:14px;">
+    <ul class="nav navbar-nav">
+      <li class="nav-item" ng-hide="FM.hideBtn('create_folder')" ng-click="FM.open('create_folder')"><span class="fa fa-plus-circle"></span> New Folder</li>
+      <li class="nav-item" ng-hide="FM.hideBtn('create_file')" ng-click="FM.createFile()"><span class="fa fa-plus-circle"></span> New File</li>
+      <li class="nav-item" ng-hide="FM.hideBtn('upload_file')" ng-click="FM.open('upload_File')"><span class="fa fa-upload"></span> Upload</li>
+      <li class="nav-item" ng-hide="FM.hideBtn('update_file')" ng-click="FM.updateFile()"><span class="fa fa-edit"></span> Edit</li>
+      <li class="nav-item" ng-hide="FM.hideBtn('move')" ng-click="FM.open('move')"><span class="fa fa-random"></span> Move</li>
+      <li class="nav-item" ng-hide="FM.hideBtn('copy')" ng-click="FM.open('copy')"><span class="fa fa-copy"></span> Copy</li>
+      <li class="nav-item" ng-hide="FM.hideBtn('delete')" ng-click="FM.open('delete')"><span class="fa fa-remove"></span> Delete</li>
+      <li class="nav-item" ng-hide="FM.hideBtn('rename')" ng-click="FM.open('rename')"><span class="fa fa-font"></span> Rename</li>
+
+      <li class="nav-item pull-xs-right" style="margin-right:0px;" ng-hide="FM.hideBtn('refresh')" ng-click="FM.refresh()"><span class="fa fa-refresh"></span> Refresh</li>
+      <li class="nav-item pull-xs-right" ng-hide="FM.hideBtn('download')" ng-click="FM.download()"><span class="fa fa-download"></span> Download</li>
+      <li class="nav-item pull-xs-right" ng-hide="FM.hideBtn('stream')" popover-is-open="FM.showPopover" popover-trigger="'outsideClick'"  popover-placement="bottom" uib-popover-template="'views/streamForm.html'"><span class="fa fa-feed"></span> Stream <span class="fa fa-caret-down"></span></li>
+    </ul>
+  </nav>
+  </div>
+
+  <div class="container">
+    <div style="position:relative;">
+    <ol class="breadcrumb" style="background-color: white;padding-left: 0.65rem;padding-right: 1rem; font-size:15px;">
+      <li ng-repeat="p in FM.curBreadCrumbPaths" class="breadcrumb-item"><a href={{p.path}}><span class="fa fa-home" ng-if="p.name=='Home'"></span> {{p.name}}</a></li>
+    </ol>
+      <span ng-hide="FM.hideBtn('edit_favorite')" ng-class="FM.favorite()?'fa-heart':'fa-heart-o'" ng-click="FM.favorite(true)" style="position:absolute;top:16px;right:10px;width:32px;height:32px;" class="fa"></span>
+    </div>
+
+    <table class="table table-hover fileTable" style='font-size:14px;'>
+      <thead>
+      <tr class="sortable" style="font-size:12px">
+        <th style="width:4%"><input type="checkbox" value="" ng-model="FM.selectAll"></th>
+        <th style="width:8%" ng-click="sortType = 'folder'; sortReverse = !sortReverse">
+          Type
+            <span ng-show="sortType == 'folder' && sortReverse" class="fa fa-caret-down"></span>
+            <span ng-show="sortType == 'folder' && !sortReverse" class="fa fa-caret-up"></span>
+        </th>
+        <th style="width:56%" ng-click="sortType = 'name'; sortReverse = !sortReverse">
+          Name
+            <span ng-show="sortType == 'name' && sortReverse" class="fa fa-caret-down"></span>
+            <span ng-show="sortType == 'name' && !sortReverse" class="fa fa-caret-up"></span>
+        </th>
+        <th style="width:20%" ng-click="sortType = 'mtime'; sortReverse = !sortReverse">
+          Time
+          <span ng-show="sortType == 'mtime' && sortReverse" class="fa fa-caret-down"></span>
+          <span ng-show="sortType == 'mtime' && !sortReverse" class="fa fa-caret-up"></span>
+        </th>
+        <th style="width:12%" ng-click="sortType = 'size'; sortReverse = !sortReverse">
+          Size
+            <span ng-show="sortType == 'size' && sortReverse" class="fa fa-caret-down"></span>
+            <span ng-show="sortType == 'size' && !sortReverse" class="fa fa-caret-up"></span>
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr context-menu="FM.menuOptions(file)" ng-dblclick="FM.clickFile(file);" ng-click="file.selected=!file.selected" ng-class="file.selected?'table-active':''" class="sortable" ng-repeat="file in FM.curFiles | orderBy:sortType:sortReverse">
+        <td><input type="checkbox" value="{{file.name}}" ng-model="file.selected" ng-click="$event.stopPropagation();"></td>
+        <td><span style="margin-left: 10px;" ng-class="FM.getIcon(file)"></span></td>
+        <td><a ng-click="FM.clickFile(file);$event.stopPropagation();">{{file.name}}</a></td>
+        <td>{{file.mtime | humanTime}}</td>
+        <td>{{file | humanSize}}</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>

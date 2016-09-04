@@ -1,0 +1,11 @@
+<div class="modal-header">
+    <h4>Delete</h4>
+</div>
+<div class="modal-body">
+    Do you want to delete it? Once deleted, it can't be undone.<br/>
+    <span style="font-weight:bold;">{{::vm.getFileNames()}}</span>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-default" ng-click="vm.no()">Cancel</button>
+    <button type="button" class="btn btn-primary" ng-click="vm.FM.delete();vm.yes();">OK</button>
+</div>

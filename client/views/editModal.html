@@ -1,0 +1,32 @@
+<div class="modal-header" style="padding:0px;">
+    <nav class="navbar navbar-dark bg-primary" style="border-radius:0px;padding-top:0px;padding-bottom:0px;">
+        <ul class="nav navbar-nav">
+            <li class="nav-item active">
+                <span ng-if="vm.editMode" class="navbar-brand">Edit {{vm.fileName}}</span>
+                <form ng-if="!vm.editMode" class="form-inline">
+                    <div class="form-group">
+                        <label for="newFile">New</label>
+                        <input type="text" class="form-control" id="newFile" ng-model="vm.fileName">
+                    </div>
+                </form>
+            </li>
+            <li class="nav-item pull-xs-right" class="close" data-dismiss="modal" aria-label="Close" ng-click="vm.no()">
+                <a uib-tooltip="Close" class="nav-link" href=""><span class="fa fa-close"></span></a>
+            </li>
+            <li class="nav-item pull-xs-right" ng-click="vm.expand=!vm.expand">
+                <a uib-tooltip="{{vm.expand?'Restore Down':'Maximize'}}" class="nav-link" href=""><span ng-class="vm.expand?'fa-expand':'fa-compress'" class="fa"></span></a>
+            </li>
+            <li class="nav-item pull-xs-right" ng-click="vm.download()">
+                <a uib-tooltip="Download" class="nav-link" href=""><span class="fa fa-download"></span></a>
+            </li>
+        </ul>
+    </nav>
+</div>
+<div class="modal-body" style="padding:0px;">
+    <textarea class="scroll-glue" style="width:100%;padding-left:16px;padding-right:8px;outline:0px;-webkit-appearance:none;" ng-model="vm.content"></textarea>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-secondary" style="float:left;" ng-click="vm.content=vm.orig">Reset Changes</button>
+    <button type="button" class="btn btn-default" ng-click="vm.no()">Cancel</button>
+    <button type="button" class="btn btn-primary" ng-disabled="vm.content==vm.orig || !!!vm.fileName" ng-click="vm.yes();">Save Changes</button>
+</div>

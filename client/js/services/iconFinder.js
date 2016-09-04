@@ -1,0 +1,75 @@
+'use strict';
+(function () {
+
+    var FMApp = angular.module('FMApp');
+
+    function IconFinder() {
+        var icons = {
+            archive: 'fa fa-file-archive-o archive file-icon',
+            audio: 'fa fa-file-audio-o audio file-icon',
+            code: 'fa fa-file-code-o code file-icon',
+            excel: 'fa fa-file-excel-o excel file-icon',
+            image: 'fa fa-file-image-o image file-icon',
+            movie: 'fa fa-file-movie-o movie file-icon',
+            file: 'fa fa-file file file-icon',
+            pdf: 'fa fa-file-pdf-o pdf file-icon',
+            ppt: 'fa fa-file-powerpoint-o ppt file-icon',
+            text: 'fa fa-file-text-o text file-icon',
+            word: 'fa fa-file-word-o word file-icon',
+            folder: 'fa fa-folder-open folder file-icon'
+        }
+        var keywords = {
+            archive: ['zip', 'compressed'],
+            audio: ['audio'],
+            code: ["java", "html", "download", "sh"],
+            excel: ['excel', 'csv'],
+            image: ['image'],
+            movie: ['video'],
+            pdf: ['pdf'],
+            ppt: ['powerpoint', 'presentation'],
+            text: ['plain'],
+            word: ['word'],
+            folder: ['directory']
+        }
+
+        var editableExtensions = ["txt", "text", "conf", "def", "list", "log", "in", "ini", "bash", "sh", "csh", "ksh", "bat", "cmd", "nt", "c", "cpp", "cs", "html", "htm", "xml", "xslt", "xsd", "java", "js", "json", "jsp", "css", "iss", "sql", "ps", "ps1", "psm1", "mt", "mtr"]
+
+        var find = function (mime) {
+            var icon;
+            for (var key in keywords) {
+                for (var i = 0; i < keywords[key].length; i++) {
+                    if (mime.indexOf(keywords[key][i]) != -1) {
+                        icon = icons[key];
+                        break;
+                    }
+                }
+                if (icon)
+                    break;
+            }
+            return icon;
+        }
+        return {
+            find: function (fs) {
+                if (fs.folder) {
+                    return icons["folder"];
+                } else if (fs.mime) {
+                    var k = find(fs.mime);
+                    if (!k)
+                        k = icons["file"];
+                    return k;
+                } else {
+                    return icons["file"];
+                }
+            },
+            isEditable: function(fs){
+                var ext = fs.name.split('.').pop();
+                if(fs.name && ext){
+                    return editableExtensions.indexOf(ext)!=-1;
+                }
+                return false;
+            }
+        }
+    }
+
+    FMApp.factory('IconFinder', IconFinder);
+})();

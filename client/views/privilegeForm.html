@@ -1,0 +1,8 @@
+<form class="streamForm">
+    <div class="form-group row">
+        <div class="col-sm-12">
+            <h6>Need access for next</h6>
+            <button style="margin-right: 6px;" ng-repeat="time in FM.accessTime track by $index" type="button" class="btn btn-secondary btn-sm" ng-click="FM.privilege(time); FM.showEditPopover=false;">{{::time}}</button>
+        </div>
+    </div>
+</form>
