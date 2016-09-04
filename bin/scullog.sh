@@ -6,6 +6,7 @@ if [ "$1" = "update" ]
 then
 	cd $SHELL_PATH
 	cp scullog-update.sh ../../scullog-update.sh
+	cp ../server/config/main.json ../../main.json
 	cd ..
 	cd ..
 	sh ./scullog-update.sh $SHELL_PATH/../.. > ./update.log &
