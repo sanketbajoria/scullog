@@ -1,6 +1,6 @@
 var FMApp = angular.module('FMApp');
 
-function FileManagerCtr($scope, $http, $location, $uibModal, $attrs, $log, $q, Favorite, IconFinder, FileDownloader, PermissionFactory, toastr, serviceFactory, BasePath, $window) {
+function FileManagerCtr($scope, $http, $location, $timeout, $uibModal, $attrs, $log, $q, Favorite, IconFinder, FileDownloader, PermissionFactory, toastr, serviceFactory, BasePath, $window) {
     var FM = this;
     FM.getIcon = IconFinder.find;
     FM.accessTime = ['15m', '30m', '60m'];
@@ -23,7 +23,7 @@ function FileManagerCtr($scope, $http, $location, $uibModal, $attrs, $log, $q, F
     // Private functions
 
     var setCurFiles = function (relPath) {
-        $http.get('api' + relPath)
+        return $http.get('api' + relPath)
             .success(function (data) {
                 var files = data;
                 files.forEach(function (file) {
@@ -163,7 +163,7 @@ function FileManagerCtr($scope, $http, $location, $uibModal, $attrs, $log, $q, F
             }
             return false;
         }).map(function (a) {
-            return a ? [a.name || a, function ($itemScope) {
+            return a ? [IconFinder.actionIcon(_case(a.perm || a),a.name || a), function ($itemScope) {
                 a.exec ? a.exec() : FM.open(_case(a));
             }] : null;
         });
@@ -203,7 +203,9 @@ function FileManagerCtr($scope, $http, $location, $uibModal, $attrs, $log, $q, F
     };
 
     FM.refresh = function () {
-        setCurFiles(FM.curFolderPath);
+        FM.refreshed = true;
+        var stopRefresh = function(){$timeout(function(){FM.refreshed = false;},1000)};
+        setCurFiles(FM.curFolderPath).then(stopRefresh,stopRefresh);
     }
 
     FM.restartFM = function () {
@@ -256,7 +258,7 @@ function FileManagerCtr($scope, $http, $location, $uibModal, $attrs, $log, $q, F
             FM.open('confirmEdit');
             return;
         }
-        if(fs.size > 1024*1024){
+        if(fs.size > 2*1024*1024){
             toastr.warning("Unable to edit file greater than 2 MB", "Warning")
             return;
         }

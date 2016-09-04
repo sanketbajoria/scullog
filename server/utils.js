@@ -1,4 +1,7 @@
 var path = require('path');
+var os = require('os');
+var platform = require('os').platform();
+
 
 var DATA_ROOT = C.data.root;
 
@@ -18,5 +21,13 @@ module.exports = {
     },
     getPermissions: function(role){
         return global.C.conf.actions[role] || global.C.conf.actions.default;
+    },
+    normalizeContent: function(content){
+        if(platform == 'win32' && content.indexOf("\r\n")==-1 && content.indexOf("\n")!=-1){
+            return content.replace(/\n/g,"\r\n");
+        }else if((platform == 'linux' || platform == 'darwin') && content.indexOf("\r\n")!=-1){
+            return content.replace(/\r\n/g,"\n");
+        }
     }
+
 };

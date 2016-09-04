@@ -2,3 +2,4 @@ node_modules/
 .idea
 server/config/main.json
 server/config/favorite.json
+server/daemon

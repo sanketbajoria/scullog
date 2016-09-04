@@ -17,7 +17,7 @@
             text: 'fa fa-file-text-o text file-icon',
             word: 'fa fa-file-word-o word file-icon',
             folder: 'fa fa-folder-open folder file-icon'
-        }
+        };
         var keywords = {
             archive: ['zip', 'compressed'],
             audio: ['audio'],
@@ -30,9 +30,20 @@
             text: ['plain'],
             word: ['word'],
             folder: ['directory']
-        }
-
-        var editableExtensions = ["txt", "text", "conf", "def", "list", "log", "in", "ini", "bash", "sh", "csh", "ksh", "bat", "cmd", "nt", "c", "cpp", "cs", "html", "htm", "xml", "xslt", "xsd", "java", "js", "json", "jsp", "css", "iss", "sql", "ps", "ps1", "psm1", "mt", "mtr"]
+        };
+        var actionIcon =  {
+            'create_folder': 'fa-plus-circle',
+            'create_file': 'fa-plus-circle',
+            'update_file': 'fa-edit',
+            'move': 'fa-random',
+            'copy': 'fa-copy',
+            'delete': 'fa-remove',
+            'rename': 'fa-font',
+            'refresh': 'fa-refresh',
+            'download': 'fa-download',
+            'stream': 'fa-feed'
+        };
+        var editableExtensions = ["txt", "text", "conf", "def", "list", "log", "in", "ini", "bash", "sh", "csh", "ksh", "bat", "cmd", "nt", "c", "cpp", "cs", "html", "htm", "xml", "xslt", "xsd", "java", "js", "json", "jsp", "css", "iss", "sql", "ps", "ps1", "psm1", "mt", "mtr"];
 
         var find = function (mime) {
             var icon;
@@ -47,7 +58,7 @@
                     break;
             }
             return icon;
-        }
+        };
         return {
             find: function (fs) {
                 if (fs.folder) {
@@ -67,6 +78,9 @@
                     return editableExtensions.indexOf(ext)!=-1;
                 }
                 return false;
+            },
+            actionIcon: function(action, title){
+                return "<span class='fa " + actionIcon[action] + "'></span> " + title;
             }
         }
     }

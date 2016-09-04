@@ -66,7 +66,7 @@ var argv = require('yargs')
         'd': {
           alias: 'directory',
           describe: 'Root Files Directory',
-          type: 'string'
+          type: 'array'
         },
         'c': {
           alias: 'config',

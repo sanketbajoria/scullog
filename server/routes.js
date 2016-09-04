@@ -150,7 +150,7 @@ router.put('/api/(.*)', Tools.loadRealPath, Tools.checkPathExists, bodyParser(),
   }
   else if(type === 'WRITE_FILE') {
     try {
-      yield fs.writeFile(p, this.request.body.content);
+      yield fs.writeFile(p, utils.normalizeContent(this.request.body.content));
       this.body = 'Edit File Succeed!';
     } catch (err) {
       this.status = 400;
@@ -189,7 +189,7 @@ router.post('/api/(.*)', Tools.loadRealPath, Tools.checkPathNotExists, bodyParse
   }
   else if(type === 'WRITE_FILE') {
     try {
-      yield fs.writeFile(p, this.request.body.content);
+      yield fs.writeFile(p, utils.normalizeContent(this.request.body.content));
       this.body = 'Create File Succeed!';
     } catch (err) {
       C.logger.error(err.stack);

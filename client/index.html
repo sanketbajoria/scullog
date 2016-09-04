@@ -45,7 +45,7 @@
     <nav class="navbar">
       <ul class="nav navbar-nav">
         <li class="nav-item active">
-          <a class="nav-link navbar-brand" href="#">Enhanced File Manager <span class="sr-only">(current)</span></a>
+          <a class="nav-link navbar-brand" href="#">Scullog <span class="sr-only">(current)</span></a>
         </li>
         <li class="nav-item pull-xs-right" ng-hide="FM.hideBtn('service')" ng-click="FM.service()">
           <a class="nav-link" href=""><span class="fa fa-cog"></span> Service</a>
@@ -97,7 +97,7 @@
       <li class="nav-item" ng-hide="FM.hideBtn('delete')" ng-click="FM.open('delete')"><span class="fa fa-remove"></span> Delete</li>
       <li class="nav-item" ng-hide="FM.hideBtn('rename')" ng-click="FM.open('rename')"><span class="fa fa-font"></span> Rename</li>
 
-      <li class="nav-item pull-xs-right" style="margin-right:0px;" ng-hide="FM.hideBtn('refresh')" ng-click="FM.refresh()"><span class="fa fa-refresh"></span> Refresh</li>
+      <li class="nav-item pull-xs-right" style="margin-right:0px;" ng-hide="FM.hideBtn('refresh')" ng-click="FM.refresh()"><span ng-class="FM.refreshed?'fa-spin fa-fw':''" class="fa fa-refresh"></span> Refresh</li>
       <li class="nav-item pull-xs-right" ng-hide="FM.hideBtn('download')" ng-click="FM.download()"><span class="fa fa-download"></span> Download</li>
       <li class="nav-item pull-xs-right" ng-hide="FM.hideBtn('stream')" popover-is-open="FM.showPopover" popover-trigger="'outsideClick'"  popover-placement="bottom" uib-popover-template="'views/streamForm.html'"><span class="fa fa-feed"></span> Stream <span class="fa fa-caret-down"></span></li>
     </ul>

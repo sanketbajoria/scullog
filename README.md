@@ -44,7 +44,7 @@ Options:
  
  -p, --port       Server Port                   		[number]
  
- -d, --directory  Root Files Directory          		[string]
+ -d, --directory  Root Files Directory          		[array]
  
  -c, --config     Local/Remote Config file				[string]
  

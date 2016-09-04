@@ -14,7 +14,7 @@ var svc;
 if(Service){
     // Create a new service object
     svc = new Service({
-        name:'Enhanced File Manager',
+        name:'Scullog',
         description: 'File Manager over a browser.',
         script: 'server\\index.js'
     });
