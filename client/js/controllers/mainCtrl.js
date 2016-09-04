@@ -273,7 +273,7 @@ function FileManagerCtr($scope, $http, $location, $timeout, $uibModal, $attrs, $
 
     FM.stream = function (lastLines) {
         var url = 'stream' + FM.selection[0].relPath;
-        log.$debug('stream url', url);
+        $log.debug('stream url', url);
         $http.get(url, {params: {buffer: lastLines || FM.lastLines}})
             .success(function (data) {
                 $log.info("Opening socket connection - " + data.channel);

@@ -1,6 +1,6 @@
 {
   "name": "scullog",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Scullog based on Node.js and Angular.js",
   "main": "./server/index.js",
   "scripts": {
@@ -19,6 +19,7 @@
     "co-fs-extra": "^1.1.0",
     "co-views": "^2.1.0",
     "cross-spawn": "^4.0.0",
+    "ejs": "^2.5.1",
     "jsonwebtoken": "^7.1.9",
     "koa": "^1.0.0",
     "koa-bodyparser": "^2.0.1",

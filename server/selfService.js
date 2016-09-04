@@ -16,7 +16,8 @@ if(Service){
     svc = new Service({
         name:'Scullog',
         description: 'File Manager over a browser.',
-        script: 'server\\index.js'
+        script: 'server/index.js',
+        cwd: __dirname
     });
 
     // Listen for the "install" event, which indicates the

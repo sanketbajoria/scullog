@@ -14,7 +14,7 @@ module.exports = {
             var s = yield exec('service --status-all');
             var myRe = /(.*) \(pid.*\) is running/g;
             var running = [];
-            while ((myArray = myRe.exec(res)) !== null) {
+            while ((myArray = myRe.exec(s)) !== null) {
                 running.push(myArray[1]);
             }
             running.filter(function(l){
@@ -33,7 +33,7 @@ module.exports = {
         var res = {data:{name:service,action:'stop'}};
         try{
             var s = yield exec(`service "${service}" stop`);
-            if(new RegExp("^.*Stopping.*OK.*$").test(s)){
+            if(new RegExp("Stopping.*OK").test(s)){
                 res.data.status = "success";
             }else{
                 res.error = s;
@@ -48,7 +48,7 @@ module.exports = {
         var res = {data:{name:service,action:'start'}};
         try{
             var s = yield exec(`service "${service}" start`);
-            if(new RegExp("^.*Starting.*OK.*$").test(s)){
+            if(new RegExp("Starting.*OK").test(s)){
                 res.data.status = "success";
             }else{
                 res.error = s;
@@ -63,7 +63,7 @@ module.exports = {
         var res = {data:{name:service,action:'restart'}};
         try{
             var s = yield exec(`service "${service}" restart`);
-            if(new RegExp("^.*Stopping.*OK.*Starting.*OK.*$").test(s)){
+            if(new RegExp("Stopping.*OK.*\\s*.*Starting.*OK").test(s)){
                 res.data.status = "success";
             }else{
                 res.error = s;
