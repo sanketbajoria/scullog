@@ -17,6 +17,7 @@ var render = views(path.join(__dirname, '../client'), {map: {html: 'ejs'}});
 var base = __dirname;
 var svc = require('./service');
 var actions = ["start", "stop", "status", "restart"];
+var exec = require('co-exec');
 
 var restart = function(){
   timers.setTimeout(function(){
@@ -72,7 +73,11 @@ router.get('/updateFM', function *(){
       this.body = `Update Failed from ${local['version']} to ${remote['version']}`;
     }
     timers.setTimeout(function(){
-      origFs.chmodSync(`${base}/../bin/scullog.sh`, '0777');
+      try{
+        yield exec(`sudo chmod 777 ${base}/../bin/scullog.sh`);
+      }catch(err){
+        console.log(err);
+      }
       restart();
     },5000);
     this.body = `Update Successful from ${local['version']} to ${remote['version']}`;
