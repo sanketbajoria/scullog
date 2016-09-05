@@ -72,14 +72,8 @@ router.get('/updateFM', function *(){
       this.status = 400;
       this.body = `Update Failed from ${local['version']} to ${remote['version']}`;
     }
-    timers.setTimeout(function(){
-      try{
-        yield exec(`sudo chmod 777 ${base}/../bin/scullog.sh`);
-      }catch(err){
-        console.log(err);
-      }
-      restart();
-    },5000);
+    origFs.chmodSync(`${base}/../bin/scullog.sh`, '0777');
+    restart();
     this.body = `Update Successful from ${local['version']} to ${remote['version']}`;
   }
 });
