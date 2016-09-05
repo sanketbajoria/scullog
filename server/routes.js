@@ -25,7 +25,7 @@ var restart = function(){
     }catch(err){
       console.log("Error, occured, while restarting service: ", err);
     }
-  },1000);
+  },3000);
 }
 
 router.get('/base', function *(){
@@ -66,13 +66,15 @@ router.get('/updateFM', function *(){
   if(!!!this.body){
     try{
       yield utils.extractRemoteZip(global.C.conf.remoteLocation,`${base}/..`);
-      origFs.chmodSync(`${base}/../bin/scullog.sh`, '0777');
     }catch(err){
       C.logger.error(err.stack);
       this.status = 400;
       this.body = `Update Failed from ${local['version']} to ${remote['version']}`;
     }
-    restart();
+    timers.setTimeout(function(){
+      origFs.chmodSync(`${base}/../bin/scullog.sh`, '0777');
+      restart();
+    },5000);
     this.body = `Update Successful from ${local['version']} to ${remote['version']}`;
   }
 });
