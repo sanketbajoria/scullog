@@ -66,6 +66,7 @@ router.get('/updateFM', function *(){
   if(!!!this.body){
     try{
       yield utils.extractRemoteZip(global.C.conf.remoteLocation,`${base}/..`);
+      origFs.chmodSync(`${base}/../bin/scullog.sh`, '0777');
     }catch(err){
       C.logger.error(err.stack);
       this.status = 400;
