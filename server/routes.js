@@ -43,9 +43,13 @@ router.get('/api/(.*)', Tools.loadRealPath, Tools.checkPathExists, function *() 
     this.body = yield * FileManager.list(p);
   }
   else {
-    //this.body = yield fs.createReadStream(p);
     this.body = origFs.createReadStream(p);
   }
+});
+
+router.get('/version', function *(){
+  var local = yield utils.read(`${base}/../package.json`);
+  this.body = local["version"];
 });
 
 router.get('/updateFM', function *(){
@@ -56,12 +60,8 @@ router.get('/updateFM', function *(){
   if(c===false){
     this.status = 400;
     this.body = "Invalid configuration for remote JSON path";
-  }else if(c==0){
-    this.status = 200;
-    this.body = 'Already up to date';
-  }else if(c<1 && this.request.query.downgrade){
-    this.status = 200;
-    this.body = 'Lower remote location'
+  }else if(c<1 && !this.request.query.forceUpgrade){
+    this.body = c==0?'Already up to date':`Lower version ${remote['version']} for remote`;
   }
   if(!!!this.body){
     try{
@@ -69,19 +69,16 @@ router.get('/updateFM', function *(){
     }catch(err){
       C.logger.error(err.stack);
       this.status = 400;
-      this.body = 'Update Failed';
+      this.body = `Update Failed from ${local['version']} to ${remote['version']}`;
     }
     restart();
-    this.status=200;
-    this.body = 'Update Successful';
+    this.body = `Update Successful from ${local['version']} to ${remote['version']}`;
   }
 });
-
 
 router.get('/restartFM', function(){
   console.log("Restarting server");
   restart();
-  this.status=200;
 });
 
 router.get('/access', function (){
@@ -103,7 +100,6 @@ router.get('/access', function (){
     }
   }
   this.body = {permissions:utils.getPermissions(role), role: role};
-  this.status = 200;
 });
 
 router.get('/partialDownload/(.*)', Tools.loadRealPath, Tools.checkPathExists, function *() {
