@@ -5,8 +5,8 @@
         function init() {
             $favorite = $http.get('/favorite').then(function (res) {
                 favorites = res.data;
-            }, function (data, status) {
-                $log.error('Error, while retreiving favorite: ', status, data);
+            }, function (err) {
+                $log.error('Error, while retreiving favorite: ', err.status, err.data);
             });
         }
         init();
@@ -21,18 +21,18 @@
                 $http.post('/favorite',{name: name || path, path:path}).then(function (res) {
                     favorites = res.data;
                     toastr.success("Added to favorites","Success");
-                }, function (data, status) {
+                }, function (err) {
                     toastr.error("Failed, adding to favorites","Failed");
-                    $log.error('Error, while adding favorite: ', status, data);
+                    $log.error('Error, while adding favorite: ', err.status, err.data);
                 });
             },
             remove: function(path){
                 $http.delete('/favorite',{params:{path:path}}).then(function (res) {
                     favorites = res.data;
                     toastr.success("Removed from favorites","Success");
-                }, function (data, status) {
+                }, function (err) {
                     toastr.error("Failed, removing from favorites","Failed");
-                    $log.error('Error, while deleting favorite: ', status, data);
+                    $log.error('Error, while deleting favorite: ', err.status, err.data);
                 });
             },
             init: init,

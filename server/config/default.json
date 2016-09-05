@@ -28,7 +28,6 @@
   },
   "port": 8080,
   "morganFormat": "combined",
-  "services": [
-    "Apache CouchDB"
-  ]
+  "remoteJSON":"https://raw.githubusercontent.com/sanketbajoria/scullog/master/package.json",
+  "remoteLocation":"https://github.com/sanketbajoria/scullog/archive/master.zip"
 }

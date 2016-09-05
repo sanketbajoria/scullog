@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 
 var koa =require('koa');
-var request = require('koa-request');
 var app = koa();
 var server = require('http').createServer(app.callback());
 var path = require('path');
@@ -9,45 +8,16 @@ var socketio = require('socket.io');
 var tail = require('./tail');
 var tracer = require('tracer');
 var mount = require('koa-mount');
-var morgan = require('koa-morgan');
 var koaStatic = require('koa-static');
 var crypto = require('crypto');
 var co = require('co');
 var fs = require('co-fs');
+var utils = require('./utils');
 
 var serviceOps = ['install','uninstall','start','stop','restart']
 var base = __dirname + '/config';
 
-const accessLogStream = require('fs').createWriteStream(__dirname + '/log/access.log',
-    { flags: 'a' });
 
-var readFile = function* (path){
-  var data = {};
-  if(path){
-    try {
-      var res;
-      if(path.indexOf('http') != -1){
-        res = (yield request({url: path})).body;
-      }else{
-        res = yield fs.readFile(path, 'utf8')
-      }
-      data = JSON.parse(res);
-    }
-    catch (err) {
-      console.log("Error: while reading file: ",path,err);
-    }
-  }
-  return data;
-}
-
-var writeFile = function* (path, obj){
-  try {
-    yield fs.writeFile(path, JSON.stringify(obj), 'utf8');
-  }
-  catch (err) {
-    console.log("Error: while writing file: ", err);
-  }
-}
 
 // Config
 var argv = require('yargs')
@@ -82,9 +52,9 @@ var argv = require('yargs')
 
 co(function *(){
   // resolve multiple promises in parallel
-  var res = yield [readFile(`${base}/default.json`), readFile(`${base}/main.json`)];
+  var res = yield [utils.read(`${base}/default.json`), utils.read(`${base}/main.json`)];
   var conf = Object.assign(res[0],res[1]);
-  var remote = yield readFile(argv.config || conf.config);
+  var remote = yield utils.read(argv.config || conf.config);
   conf = Object.assign(conf, remote);
   conf.port = argv.port || conf.port;
   conf.directory = argv.directory || conf.directory;
@@ -125,7 +95,6 @@ co(function *(){
     app.use(Tools.handelError);
     app.use(Tools.checkAccessCookie);
     app.use(Tools.realIp);
-    app.use(morgan.middleware(C.conf.morganFormat, { stream: accessLogStream, frequency:"daily", verbose: false, date_format: "YYYY-MM-DD" }));
     var IndexRouter = require('./routes');
     app.use(mount('/', IndexRouter));
     app.use(koaStatic(path.join(__dirname,'../client/')));
@@ -135,7 +104,7 @@ co(function *(){
 
     global.C.io = socketio.listen(server, {log: false});
   }
-  yield writeFile(`${base}/main.json`, conf);
+  yield utils.write(`${base}/main.json`, conf);
 
 });
 

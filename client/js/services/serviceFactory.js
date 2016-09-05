@@ -9,10 +9,10 @@
         var service = actions.reduce(function(result,action){
                             result[action] = function(service){
                                 return $http.get(url(action,service)).then(function(res){
-                                    $log.debug(res);
+                                    $log.debug(res.data);
                                     return res.data.data;
                                 }, function(err){
-                                    $log.error(err);
+                                    $log.error(err.status, err.data);
                                     toastr.error(`Failed, ${service} ${action}`,"Error");
                                 });
                             }

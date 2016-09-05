@@ -10,8 +10,8 @@
             $permissions = $http.get(url, {params: {t: expiresIn}}).then(function (res) {
                 permissions = res.data.permissions;
                 role = res.data.role;
-            }, function (data, status) {
-                $log.error('Error, while retreiving permission: ', status, data);
+            }, function (err) {
+                $log.error('Error, while retreiving permission: ', err.status, err.data);
             });
         }
 

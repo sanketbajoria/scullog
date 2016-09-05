@@ -16,8 +16,17 @@ var router = new koaRouter();
 var render = views(path.join(__dirname, '../client'), {map: {html: 'ejs'}});
 var base = __dirname;
 var svc = require('./service');
-var config = require('./config');
 var actions = ["start", "stop", "status", "restart"];
+
+var restart = function(){
+  timers.setTimeout(function(){
+    try{
+      var child = spawn(`${base}/../bin/scullog.sh`, ['-s','restart'], {detached:true});
+    }catch(err){
+      console.log("Error, occured, while restarting service: ", err);
+    }
+  },1000);
+}
 
 router.get('/base', function *(){
   this.body = global.C.data.root;
@@ -39,28 +48,39 @@ router.get('/api/(.*)', Tools.loadRealPath, Tools.checkPathExists, function *() 
   }
 });
 
-router.get('/updateFM', function(){
+router.get('/updateFM', function *(){
   console.log("Updating server");
-  timers.setTimeout(function(){
+  var remote = yield utils.read(global.C.conf.remoteJSON);
+  var local = yield utils.read(`${base}/../package.json`);
+  var c = utils.versionCompare(remote['version'], local['version']);
+  if(c===false){
+    this.status = 400;
+    this.body = "Invalid configuration for remote JSON path";
+  }else if(c==0){
+    this.status = 200;
+    this.body = 'Already up to date';
+  }else if(c<1 && this.request.query.downgrade){
+    this.status = 200;
+    this.body = 'Lower remote location'
+  }
+  if(!!!this.body){
     try{
-      var child = spawn(`${base}/../bin/scullog.sh`, ["update"], {detached:true});
+      yield utils.extractRemoteZip(global.C.conf.remoteLocation,`${base}/..`);
     }catch(err){
-      console.log("Error, occured, while updating service: ", err);
+      C.logger.error(err.stack);
+      this.status = 400;
+      this.body = 'Update Failed';
     }
-  },1000);
-  this.status=200;
+    restart();
+    this.status=200;
+    this.body = 'Update Successful';
+  }
 });
 
 
 router.get('/restartFM', function(){
   console.log("Restarting server");
-  timers.setTimeout(function(){
-    try{
-      var child = spawn(`${base}/../bin/scullog.sh`, ['-s','restart'], {detached:true});
-    }catch(err){
-      console.log("Error, occured, while restarting service: ", err);
-    }
-  },1000);
+  restart();
   this.status=200;
 });
 
@@ -223,7 +243,7 @@ router.get("/service", function *(){
 var favorites;
 router.get('/favorite', function *(){
   if(!favorites)
-    favorites = yield config.read(`${base}/config/favorite.json`);
+    favorites = yield utils.read(`${base}/config/favorite.json`);
   this.body = favorites;
 });
 
@@ -231,14 +251,14 @@ router.post('/favorite', bodyParser(), function *(){
   FilePath(this.request.body.path, this.request.query.base);
   favorites[this.request.query.base] = favorites[this.request.query.base] || {};
   favorites[this.request.query.base][this.request.body.path] = this.request.body.name;
-  yield config.write(this.body = favorites,`${base}/config/favorite.json`);
+  yield utils.write(`${base}/config/favorite.json`, this.body = favorites);
 });
 
 router.delete('/favorite', function *(){
   var p = this.request.query.path;
   if(favorites[this.request.query.base] && p in favorites[this.request.query.base]){
     delete favorites[this.request.query.base][p];
-    yield config.write(this.body = favorites,`${base}/config/favorite.json`);
+    yield utils.write(`${base}/config/favorite.json`, this.body = favorites);
   }else{
     this.body = "Bad argument type";
     this.status = 400;

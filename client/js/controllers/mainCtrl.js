@@ -131,7 +131,6 @@ function FileManagerCtr($scope, $http, $location, $timeout, $uibModal, $attrs, $
     });
 
 
-
     //Public functions
 
     FM.menuOptions = function (file) {
@@ -213,7 +212,11 @@ function FileManagerCtr($scope, $http, $location, $timeout, $uibModal, $attrs, $
     }
 
     FM.updateFM = function () {
-        $http.get("/updateFM");
+        $http.get("/updateFM").then(function(res){
+            FM.successData = res.data;
+        }, function(err){
+            FM.errorData = err.status + ': ' + err.data;
+        });
     }
 
     FM.delete = function () {

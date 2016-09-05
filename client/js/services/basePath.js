@@ -6,8 +6,8 @@
             $path = $http.get('/base').then(function (res) {
                 paths = res.data;
                 activePath = paths[0];
-            }, function (data, status) {
-                $log.error('Error, while retreiving base: ', status, data);
+            }, function (err) {
+                $log.error('Error, while retreiving base: ', err.status, err.data);
             });
         }
         init();
