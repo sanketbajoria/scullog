@@ -7,17 +7,18 @@ module.exports = {
         if(!Array.isArray(services))
             services = [services];
         try{
+            var m = (yield exec('SC QUERY state= all |findstr "DISPLAY_NAME STATE"')).split(os.EOL).map(function(l,i){
+                if(!!l){
+                    return (i%2==1)?(l.indexOf("RUNNING")>-1):(l.split(":")[1].trim());
+                }
+            });
             res.data = services.reduce(function(r,s){
-                r[s]=false;
+                var i = m.indexOf(s);
+                if(i>-1){
+                    r[s] = m[++i];
+                }
                 return r;
             },{});
-            var s = yield exec('net start');
-            s.split(os.EOL).filter(function(l){
-                return services.indexOf(l.trim())!=-1;
-            }).reduce(function(r,s){
-                r[s.trim()]=true;
-                return r;
-            },res.data);
         }catch(e){
             console.error(e, "Error, while retrieving status of service");
             res.error = e;

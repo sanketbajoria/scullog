@@ -7,22 +7,27 @@ module.exports = {
         if(!Array.isArray(services))
             services = [services];
         try{
+            var s = yield exec('service --status-all');
+            var runRe = /(.*) \(pid.*\) is running/g;
+            var stopRe = /(.*) is stopped/g;
+            var m = [];
+            var temp;
+            for (var i=0;(temp = runRe.exec(s)) !== null;i++) {
+                m.push(temp[1].trim());
+                m.push(true);
+            }
+            for (i=0;(temp = stopRe.exec(s)) !== null;i++) {
+                m.push(temp[1].trim());
+                m.push(false);
+            }
+            console.log(m);
             res.data = services.reduce(function(r,s){
-                r[s]=false;
+                var i = m.indexOf(s);
+                if(i>-1){
+                    r[s] = m[++i];
+                }
                 return r;
             },{});
-            var s = yield exec('service --status-all');
-            var myRe = /(.*) \(pid.*\) is running/g;
-            var running = [];
-            while ((myArray = myRe.exec(s)) !== null) {
-                running.push(myArray[1]);
-            }
-            running.filter(function(l){
-                return services.indexOf(l.trim())!=-1;
-            }).reduce(function(r,s){
-                r[s.trim()]=true;
-                return r;
-            },res.data);
         }catch(e){
             console.error(e, "Error, while retrieving status of service");
             res.error = e;

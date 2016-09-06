@@ -117,6 +117,7 @@ module.exports = {
         }else if((platform == 'linux' || platform == 'darwin') && content.indexOf("\r\n")!=-1){
             return content.replace(/\r\n/g,"\n");
         }
+        return content;
     }
 
 };

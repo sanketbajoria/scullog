@@ -26,7 +26,7 @@ var restart = function(){
     }catch(err){
       console.log("Error, occured, while restarting service: ", err);
     }
-  },3000);
+  },1000);
 }
 
 router.get('/base', function *(){
@@ -81,6 +81,7 @@ router.get('/updateFM', function *(){
 router.get('/restartFM', function(){
   console.log("Restarting server");
   restart();
+  this.body = "Restart Successful";
 });
 
 router.get('/access', function (){
