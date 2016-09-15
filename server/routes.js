@@ -18,6 +18,8 @@ var base = __dirname;
 var svc = require('./service');
 var actions = ["start", "stop", "status", "restart"];
 var exec = require('co-exec');
+var childProcess = require('child_process');
+
 
 var restart = function(){
   timers.setTimeout(function(){
@@ -72,6 +74,7 @@ router.get('/updateFM', function *(){
       this.status = 400;
       this.body = `Update Failed from ${local['version']} to ${remote['version']}`;
     }
+    childProcess.execSync(`cd ${base}/.. && npm install`);
     origFs.chmodSync(`${base}/../bin/scullog.sh`, '0777');
     restart();
     this.body = `Update Successful from ${local['version']} to ${remote['version']}`;
