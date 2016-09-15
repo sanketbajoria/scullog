@@ -13,6 +13,7 @@ var crypto = require('crypto');
 var co = require('co');
 var fs = require('co-fs');
 var utils = require('./utils');
+var cors = require('koa-cors');
 
 var serviceOps = ['install','uninstall','start','stop','restart']
 var base = __dirname + '/config';
@@ -92,6 +93,7 @@ co(function *(){
 
 
     app.proxy = true;
+    app.use(cors());
     app.use(Tools.handelError);
     app.use(Tools.checkAccessCookie);
     app.use(Tools.realIp);
