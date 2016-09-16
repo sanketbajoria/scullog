@@ -69,6 +69,7 @@ co(function *(){
     logger: require('tracer').console({level: 'info'})
   };
   global.C.conf = conf;
+  yield utils.write(`${base}/main.json`, conf);
 
   if(argv.service){
     var service = require('./selfService');
@@ -106,7 +107,6 @@ co(function *(){
 
     global.C.io = socketio.listen(server, {log: false});
   }
-  yield utils.write(`${base}/main.json`, conf);
 
 });
 

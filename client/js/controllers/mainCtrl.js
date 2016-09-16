@@ -265,7 +265,7 @@ function FileManagerCtr($scope, $http, $location, $timeout, $uibModal, $attrs, $
             toastr.warning("Unable to edit file greater than 2 MB", "Warning")
             return;
         }
-        $http.get('api' + fs.relPath)
+        $http.get('api' + fs.relPath, { transformResponse: function(d, h){return d;}})
             .success(function (data) {
                 FM.open('edit', {name:fs.name,content:data,editMode:true}, 'EditModalCtrl', 'lg');
             })
