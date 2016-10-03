@@ -1,5 +1,5 @@
 # Scullog
-Scullog, having capability of sharing the local drive to the browser. And, do below features.
+Scullog, having capability of sharing the local drive to the browser. Stream the log file via Socket.IO over browser. It also provide various other features:
 
 
 # Features
