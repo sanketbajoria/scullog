@@ -15,6 +15,7 @@ Scullog, having capability of sharing the local drive to the browser. And, do be
 - Detailed logging. 
 - Adding path to favorite, to quickly jump on it
 - Support right hand context menu for file/folder
+- Run as service or standalone mode
 
 
 # Installation
