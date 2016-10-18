@@ -15,6 +15,7 @@ Scullog, having capability of sharing the local drive to the browser. Stream the
 - Adding path to favorite, to quickly jump on it
 - Support right hand context menu for file/folder
 - Run as service or standalone mode
+- URL prefix support (i.e. /scullog)
 
 # Screenshots
 <img src="https://cloud.githubusercontent.com/assets/2969587/19343848/8d8e405c-9155-11e6-8106-c32896b6be47.jpg" width="360" height="280" alt="Basic Mode Screenshot" title="Basic Mode Screenshot" /> <img src="https://cloud.githubusercontent.com/assets/2969587/19343849/8da1454e-9155-11e6-967a-6a5a613957a6.jpg" width="360" height="280" alt="Privilege Mode Screenshot" title="Privilege Mode Screenshot"/>
@@ -47,6 +48,8 @@ Options:
  -p, --port       Server Port                   		[number]
  
  -d, --directory  Root Files Directory          		[array]
+
+ -P, --prefix     URL Prefix                                   [string]
  
  -c, --config     Local/Remote Config file				[string]
  
@@ -116,6 +119,8 @@ Options:
  -p, --port       Server Port                   		[number]
  
  -d, --directory  Root Files Directory          		[array]
+
+ -P, --prefix     URL Prefix                                   [string]
  
  -c, --config     Local/Remote Config file				[string]
  

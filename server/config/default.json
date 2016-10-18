@@ -27,6 +27,7 @@
     ]
   },
   "port": 8080,
+  "prefix": "/",
   "morganFormat": "combined",
   "remoteJSON":"https://raw.githubusercontent.com/sanketbajoria/scullog/master/package.json",
   "remoteLocation":"https://github.com/sanketbajoria/scullog/archive/master.zip"

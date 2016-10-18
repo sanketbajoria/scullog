@@ -3,7 +3,7 @@
     function BasePath($q, $http, $log, toastr) {
         var paths, activePath, $path;
         function init() {
-            $path = $http.get('/base').then(function (res) {
+            $path = $http.get('./base').then(function (res) {
                 paths = res.data;
                 activePath = paths[0];
             }, function (err) {
