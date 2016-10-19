@@ -111,7 +111,7 @@ co(function *(){
 
     startServer(app, + conf.port);
 
-    global.C.io = socketio.listen(server, {log: false});
+    global.C.io = socketio.listen(server, {path: conf.prefix + '/socket.io', log: false});
   }
 
 });
