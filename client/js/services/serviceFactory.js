@@ -3,7 +3,7 @@
     function serviceFactory($http, $log, toastr) {
 
         function url(a,s){
-            return "/service?a=" + (a || "status") + (s?"&s="+s:"");
+            return "./service?a=" + (a || "status") + (s?"&s="+s:"");
         }
         var actions = ['start', 'stop', 'restart', 'status']
         var service = actions.reduce(function(result,action){

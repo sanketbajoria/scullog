@@ -12,7 +12,7 @@ var utils = require('./utils');
 var FilePath = utils.filePath;
 var FileManager = require('./fileManager');
 var timers = require('timers');
-var router = new koaRouter();
+var router = new koaRouter({prefix: global.C.conf.prefix});
 var render = views(path.join(__dirname, '../client'), {map: {html: 'ejs'}});
 var base = __dirname;
 var svc = require('./service');
@@ -31,15 +31,15 @@ var restart = function(){
   },1000);
 }
 
-router.get('/base', function *(){
+router.get('base', function *(){
   this.body = global.C.data.root;
 });
 
-router.get('/', function *() {
+router.get('', function *() {
   this.body = yield render('index');
 });
 
-router.get('/api/(.*)', Tools.loadRealPath, Tools.checkPathExists, function *() {
+router.get('api/(.*)', Tools.loadRealPath, Tools.checkPathExists, function *() {
   var p = this.request.fPath;
   var stats = yield fs.stat(p);
   if (stats.isDirectory()) {
@@ -50,12 +50,12 @@ router.get('/api/(.*)', Tools.loadRealPath, Tools.checkPathExists, function *() 
   }
 });
 
-router.get('/version', function *(){
+router.get('version', function *(){
   var local = yield utils.read(`${base}/../package.json`);
   this.body = local["version"];
 });
 
-router.get('/updateFM', function *(){
+router.get('updateFM', function *(){
   console.log("Updating server");
   var remote = yield utils.read(global.C.conf.remoteJSON);
   var local = yield utils.read(`${base}/../package.json`);
@@ -81,13 +81,13 @@ router.get('/updateFM', function *(){
   }
 });
 
-router.get('/restartFM', function(){
+router.get('restartFM', function(){
   console.log("Restarting server");
   restart();
   this.body = "Restart Successful";
 });
 
-router.get('/access', function (){
+router.get('access', function (){
   var role = "default";
   var expiresIn = this.request.query.t;
   var accessJwt;
@@ -108,7 +108,7 @@ router.get('/access', function (){
   this.body = {permissions:utils.getPermissions(role), role: role};
 });
 
-router.get('/partialDownload/(.*)', Tools.loadRealPath, Tools.checkPathExists, function *() {
+router.get('partialDownload/(.*)', Tools.loadRealPath, Tools.checkPathExists, function *() {
   var p = this.request.fPath;
   var stats = yield fs.stat(p);
   if (stats.isDirectory()) {
@@ -125,7 +125,7 @@ router.get('/partialDownload/(.*)', Tools.loadRealPath, Tools.checkPathExists, f
   }
 });
 
-router.get('/stream/(.*)', Tools.loadRealPath, Tools.checkPathExists, function *() {
+router.get('stream/(.*)', Tools.loadRealPath, Tools.checkPathExists, function *() {
   var p = this.request.fPath;
   var stats = yield fs.stat(p);
   if (stats.isDirectory()) {
@@ -136,13 +136,13 @@ router.get('/stream/(.*)', Tools.loadRealPath, Tools.checkPathExists, function *
   }
 });
 
-router.del('/api/(.*)', Tools.loadRealPath, Tools.checkPathExists, function *() {
+router.del('api/(.*)', Tools.loadRealPath, Tools.checkPathExists, function *() {
   var p = this.request.fPath;
   yield * FileManager.remove(p);
   this.body = 'Delete Succeed!';
 });
 
-router.put('/api/(.*)', Tools.loadRealPath, Tools.checkPathExists, bodyParser(), function* () {
+router.put('api/(.*)', Tools.loadRealPath, Tools.checkPathExists, bodyParser(), function* () {
   var type = this.query.type;
   var p = this.request.fPath;
   if (!type) {
@@ -185,7 +185,7 @@ router.put('/api/(.*)', Tools.loadRealPath, Tools.checkPathExists, bodyParser(),
   }
 });
 
-router.post('/api/(.*)', Tools.loadRealPath, Tools.checkPathNotExists, bodyParser(), function *() {
+router.post('api/(.*)', Tools.loadRealPath, Tools.checkPathNotExists, bodyParser(), function *() {
   console.log("reached here");
   var type = this.query.type;
   var p = this.request.fPath;
@@ -225,7 +225,7 @@ router.post('/api/(.*)', Tools.loadRealPath, Tools.checkPathNotExists, bodyParse
   }
 });
 
-router.get("/service", function *(){
+router.get("service", function *(){
   var action = this.request.query.a;
   var service = this.request.query.s || (action == 'status' && global.C.conf.services);
   var res = {};
@@ -243,20 +243,20 @@ router.get("/service", function *(){
 });
 
 var favorites;
-router.get('/favorite', function *(){
+router.get('favorite', function *(){
   if(!favorites)
     favorites = yield utils.read(`${base}/config/favorite.json`);
   this.body = favorites;
 });
 
-router.post('/favorite', bodyParser(), function *(){
+router.post('favorite', bodyParser(), function *(){
   FilePath(this.request.body.path, this.request.query.base);
   favorites[this.request.query.base] = favorites[this.request.query.base] || {};
   favorites[this.request.query.base][this.request.body.path] = this.request.body.name;
   yield utils.write(`${base}/config/favorite.json`, this.body = favorites);
 });
 
-router.delete('/favorite', function *(){
+router.delete('favorite', function *(){
   var p = this.request.query.path;
   if(favorites[this.request.query.base] && p in favorites[this.request.query.base]){
     delete favorites[this.request.query.base][p];

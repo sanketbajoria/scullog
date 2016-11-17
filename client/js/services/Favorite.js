@@ -3,7 +3,7 @@
     function Favorite(BasePath, $http, $log, toastr) {
         var favorites, $favorite;
         function init() {
-            $favorite = $http.get('/favorite').then(function (res) {
+            $favorite = $http.get('./favorite').then(function (res) {
                 favorites = res.data;
             }, function (err) {
                 $log.error('Error, while retreiving favorite: ', err.status, err.data);
@@ -18,7 +18,7 @@
               return this.get()[BasePath.activePath()] && path in this.get()[BasePath.activePath()];
             },
             add: function(path, name){
-                $http.post('/favorite',{name: name || path, path:path}).then(function (res) {
+                $http.post('./favorite',{name: name || path, path:path}).then(function (res) {
                     favorites = res.data;
                     toastr.success("Added to favorites","Success");
                 }, function (err) {
@@ -27,7 +27,7 @@
                 });
             },
             remove: function(path){
-                $http.delete('/favorite',{params:{path:path}}).then(function (res) {
+                $http.delete('./favorite',{params:{path:path}}).then(function (res) {
                     favorites = res.data;
                     toastr.success("Removed from favorites","Success");
                 }, function (err) {

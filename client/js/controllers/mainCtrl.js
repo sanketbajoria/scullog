@@ -23,7 +23,7 @@ function FileManagerCtr($scope, $http, $location, $timeout, $uibModal, $attrs, $
     // Private functions
 
     var setCurFiles = function (relPath) {
-        return $http.get('api' + relPath)
+        return $http.get('./api' + relPath)
             .success(function (data) {
                 var files = data;
                 files.forEach(function (file) {
@@ -208,11 +208,11 @@ function FileManagerCtr($scope, $http, $location, $timeout, $uibModal, $attrs, $
     }
 
     FM.restartFM = function () {
-        $http.get("/restartFM");
+        $http.get("./restartFM");
     }
 
     FM.updateFM = function () {
-        $http.get("/updateFM").then(function(res){
+        $http.get("./updateFM").then(function(res){
             FM.successData = res.data;
         }, function(err){
             FM.errorData = err.status + ': ' + err.data;
@@ -280,7 +280,7 @@ function FileManagerCtr($scope, $http, $location, $timeout, $uibModal, $attrs, $
         $http.get(url, {params: {buffer: lastLines || FM.lastLines}})
             .success(function (data) {
                 $log.info("Opening socket connection - " + data.channel);
-                var socket = new io.connect('/' + data.channel);
+                var socket = new io.connect('/' + data.channel, {path: window.location.pathname + 'socket.io'});
                 var closingSocket = function () {
                     $log.info("Closing socket connection: " + data.channel);
                     socket.close();

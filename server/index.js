@@ -22,7 +22,7 @@ var base = __dirname + '/config';
 
 // Config
 var argv = require('yargs')
-    .usage('USAGE: scullog [-s <service>] [-p <port>] [-d <directory>] [-c <config>]')
+    .usage('USAGE: scullog [-s <service>] [-p <port>] [-d <directory>] [-P <prefix>] [-c <config>]')
     .options({
         's': {
           alias: 'service',
@@ -38,6 +38,11 @@ var argv = require('yargs')
           alias: 'directory',
           describe: 'Root Files Directory',
           type: 'array'
+        },
+        'P': {
+          alias: 'prefix',
+          describe: 'URL prefix',
+          type: 'string'
         },
         'c': {
           alias: 'config',
@@ -59,6 +64,7 @@ co(function *(){
   conf = Object.assign(conf, remote);
   conf.port = argv.port || conf.port;
   conf.directory = argv.directory || conf.directory;
+  conf.prefix = argv.prefix || conf.prefix;
   conf.config = argv.config || conf.config;
   conf.id = conf.id || "FMAccess-"+new Date().getTime();
 
@@ -100,12 +106,12 @@ co(function *(){
     app.use(Tools.realIp);
     var IndexRouter = require('./routes');
     app.use(mount('/', IndexRouter));
-    app.use(koaStatic(path.join(__dirname,'../client/')));
-    app.use(koaStatic(path.join(__dirname,'../node_modules/')));
+    app.use(mount(conf.prefix, koaStatic(path.join(__dirname,'../client/'))));
+    app.use(mount(conf.prefix, koaStatic(path.join(__dirname,'../node_modules/'))));
 
     startServer(app, + conf.port);
 
-    global.C.io = socketio.listen(server, {log: false});
+    global.C.io = socketio.listen(server, {path: conf.prefix + 'socket.io', log: false});
   }
 
 });

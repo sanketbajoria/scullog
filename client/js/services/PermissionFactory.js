@@ -1,7 +1,7 @@
 'use strict';
 (function () {
     function PermissionFactory($q, $http, $log, toastr) {
-        var url = '/access';
+        var url = './access';
         var permissions = ["download", "stream", "refresh"];
         var role = 'default';
         var $permissions;
