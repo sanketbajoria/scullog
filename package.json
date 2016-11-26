@@ -7,7 +7,7 @@
     "start": "node --harmony ./server/index.js"
   },
   "bin": {
-    "scullog": "../scullog/bin/scullog.sh"
+    "scullog": "../scullog/bin/scullog"
   },
   "dependencies": {
     "adm-zip": "^0.4.7",
