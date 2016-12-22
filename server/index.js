@@ -15,7 +15,7 @@ var fs = require('co-fs');
 var utils = require('./utils');
 var cors = require('koa-cors');
 
-var serviceOps = ['install','uninstall','start','stop','restart']
+var serviceOps = ['install','uninstall']
 var base = __dirname + '/config';
 
 

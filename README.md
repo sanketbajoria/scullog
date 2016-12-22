@@ -43,7 +43,7 @@ scullog [-s <service>] [-p <port>] [-d <directory>] [-c <config>]
 
 Options:
 
- -s, --service    install/uninstall as service			[choices: "install", "uninstall", "start", "stop", "restart"]
+ -s, --service    install/uninstall as service			[choices: "install", "uninstall"]
  
  -p, --port       Server Port                   		[number]
  
