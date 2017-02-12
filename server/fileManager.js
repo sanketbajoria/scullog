@@ -72,9 +72,9 @@ FileManager.rename = function *(src, dest) {
 
 FileManager.stream = function (src, query){
   var filesNamespace = crypto.createHash('md5').update(src).digest('hex');
-  console.log("Received stream request: " + filesNamespace);
+  global.C.logger.info("Received stream request: " + filesNamespace);
   if(!tailMap[filesNamespace]){
-    console.log("Tail channel doesn't exist: " + filesNamespace);
+    global.C.logger.info("Tail channel doesn't exist: " + filesNamespace);
     tailMap[filesNamespace] = tail(src, query);
     tailCount[filesNamespace] = 0;
     var filesSocket = global.C.io.of('/' + filesNamespace).on('connection', function (socket) {
@@ -82,12 +82,12 @@ FileManager.stream = function (src, query){
       socket.emit('line', tailMap[filesNamespace].getBuffer().reverse());
       //On disconnect of a connection
       socket.on('disconnect', function(){
-        console.log("Disconnect request received for channel: " + filesNamespace);
+        global.C.logger.info("Disconnect request received for channel: " + filesNamespace);
         tailCount[filesNamespace] = tailCount[filesNamespace] - 1;
         tailCount[filesNamespace] = tailCount[filesNamespace]<0?0:tailCount[filesNamespace];
-        console.log("Client count on channel: " + tailCount[filesNamespace]);
+        global.C.logger.info("Client count on channel: " + tailCount[filesNamespace]);
         if(tailCount[filesNamespace] == 0 && tailMap[filesNamespace]){
-          console.log("Killing the tail channel: " + filesNamespace);
+          global.C.logger.info("Killing the tail channel: " + filesNamespace);
           global.C.io.of('/' + filesNamespace).removeAllListeners();
           tailMap[filesNamespace].removeAllListeners();
           tailMap[filesNamespace].kill();
@@ -101,7 +101,7 @@ FileManager.stream = function (src, query){
     });
   }
   tailCount[filesNamespace] = tailCount[filesNamespace] + 1;
-  console.log("Client count on channel: " + tailCount[filesNamespace]);
+  global.C.logger.info("Client count on channel: " + tailCount[filesNamespace]);
   return {channel: filesNamespace, path: src};
 };
 

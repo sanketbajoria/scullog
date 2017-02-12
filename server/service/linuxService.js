@@ -20,7 +20,7 @@ module.exports = {
                 m.push(temp[1].trim());
                 m.push(false);
             }
-            console.log(m);
+            global.C.logger.info(m);
             res.data = services.reduce(function(r,s){
                 var i = m.indexOf(s);
                 if(i>-1){

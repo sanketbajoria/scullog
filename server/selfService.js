@@ -17,7 +17,7 @@ if(platform == 'win32'){
         }
         function installForever(){
             var r=shell.exec('whereis forever');
-            console.log(r);
+            global.C.logger.info(r);
             var rs = r.output && r.output.split(" ");
             if(rs && rs.length && rs.length > 1) {
                 return;
@@ -67,15 +67,15 @@ if(Service){
     // Listen for the "install" event, which indicates the
     // process is available as a service.
     svc.on('install',function(){
-        console.log("Installation complete");
+        global.C.logger.info("Installation complete");
         svc.start();
-        console.log("Auto starting the application");
+        global.C.logger.info("Auto starting the application");
     });
 
     // Listen for the "uninstall" event so we know when it's done.
     svc.on('uninstall',function(){
-        console.log('Uninstall complete.');
-        console.log('The service exists: ',svc.exists);
+        global.C.logger.info('Uninstall complete.');
+        global.C.logger.info('The service exists: ',svc.exists);
     });
 };
 

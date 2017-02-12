@@ -26,7 +26,7 @@ var restart = function(){
     try{
       var child = spawn(`${base}/../bin/scullog.sh`, ['-s','restart'], {detached:true});
     }catch(err){
-      console.log("Error, occured, while restarting service: ", err);
+      global.C.logger.info("Error, occured, while restarting service: ", err);
     }
   },1000);
 }
@@ -56,7 +56,7 @@ router.get('/version', function *(){
 });
 
 router.get('/updateFM', function *(){
-  console.log("Updating server");
+  global.C.logger.info("Updating server");
   var remote = yield utils.read(global.C.conf.remoteJSON);
   var local = yield utils.read(`${base}/../package.json`);
   var c = utils.versionCompare(remote['version'], local['version']);
@@ -82,7 +82,7 @@ router.get('/updateFM', function *(){
 });
 
 router.get('/restartFM', function(){
-  console.log("Restarting server");
+  global.C.logger.info("Restarting server");
   restart();
   this.body = "Restart Successful";
 });
@@ -186,7 +186,7 @@ router.put('/api/(.*)', Tools.loadRealPath, Tools.checkPathExists, bodyParser(),
 });
 
 router.post('/api/(.*)', Tools.loadRealPath, Tools.checkPathNotExists, bodyParser(), function *() {
-  console.log("reached here");
+  global.C.logger.info("reached here");
   var type = this.query.type;
   var p = this.request.fPath;
   if (!type) {

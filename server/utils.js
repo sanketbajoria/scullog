@@ -22,7 +22,7 @@ var read = function* (path){
             data = JSON.parse(res);
         }
         catch (err) {
-            console.log("Error: while reading file: ",path,err);
+            global.C.logger.info("Error: while reading file: ",path,err);
         }
     }
     return data;
@@ -33,7 +33,7 @@ var write = function* (path, obj){
         yield fs.writeFile(path, JSON.stringify(obj), 'utf8');
     }
     catch (err) {
-        console.log("Error: while writing file: ", err);
+        global.C.logger.info("Error: while writing file: ", err);
     }
 }
 
