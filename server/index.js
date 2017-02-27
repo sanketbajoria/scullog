@@ -108,7 +108,7 @@ co(function* () {
     var Tools = require('./tools');
 
     var startServer = function (app, port) {
-      server.listen(port);
+      server.listen(port, "127.0.0.1");
       C.logger.info('listening on *.' + port);
     };
 

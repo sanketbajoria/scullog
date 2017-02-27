@@ -225,6 +225,9 @@ router.post('/api/(.*)', Tools.loadRealPath, Tools.checkPathNotExists, bodyParse
   }
 });
 
+/**
+ * Start Stop, or Check Status of Service
+ */
 router.get("/service", function *(){
   var action = this.request.query.a;
   var service = this.request.query.s || (action == 'status' && global.C.conf.services);
@@ -242,6 +245,9 @@ router.get("/service", function *(){
   }
 });
 
+/**
+ * Favorites CRUD Operation
+ */
 var favorites;
 router.get('/favorite', function *(){
   if(!favorites)
@@ -264,6 +270,27 @@ router.delete('/favorite', function *(){
   }else{
     this.body = "Bad argument type";
     this.status = 400;
+  }
+});
+
+/**
+ * Search text over a path
+ * {pattern: "", folder: "", recursive: "", fileMask: "", regex: "extended", ignoreCase: true/false, wholeWord: ""} 
+ */
+router.post('/find', bodyParser(), function *() {
+  var criteria = this.request.body.criteria;
+  var folderPath = FilePath(criteria.folder, this.request.query.base);
+  if(criteria.pattern && (yield fs.exists(folderPath))){
+    criteria.folder = folderPath;
+    try{
+      this.body = yield grep.exec(criteria);
+    }catch(e){
+      this.status = 400;
+      this.body = JSON.stringify(e);
+    }
+  }else{
+    this.status = 400;
+    this.body = 'Invalid Parameter list - ' + JSON.stringify(criteria);
   }
 });
 

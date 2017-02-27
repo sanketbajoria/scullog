@@ -309,15 +309,22 @@ function FileManagerCtr($scope, $http, $location, $timeout, $uibModal, $attrs, $
         httpRequest('POST', url, {type: 'CREATE_FOLDER'}, null);
     };
 
-    FM.upload = function () {
+    FM.upload = function (file) {
+        file = file || FM.uploadFile;
         var formData = new FormData();
-        formData.append('upload', FM.uploadFile);
-        var url = 'api' + FM.curFolderPath + FM.uploadFile.name;
+        formData.append('upload', file);
+        var url = 'api' + FM.curFolderPath + file.name;
         httpRequest('POST', url, {type: 'UPLOAD_FILE'}, formData, {
             transformRequest: angular.identity,
             headers: {'Content-Type': undefined}
         });
     };
+
+    FM.uploadFiles = function(files){
+        files.forEach(function(file){
+            FM.upload(file);
+        });
+    }
 
     FM.curPath = function(path){
         return path?$location.url(path):FM.curFolderPath;

@@ -22,11 +22,11 @@
   <script src="//cdnjs.cloudflare.com/ajax/libs/angularjs-scroll-glue/2.0.7/scrollglue.min.js"></script>
   <script src="//npmcdn.com/angular-toastr/dist/angular-toastr.tpls.js"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.3/FileSaver.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/danialfarid-angular-file-upload/12.2.13/ng-file-upload-all.min.js"></script>
   <script src="js/services/contextMenu.js"></script>
   <script src="js/index.js"></script>
   <script src="js/controllers/mainCtrl.js"></script>
   <script src="js/controllers/modalCtrl.js"></script>
-  <script src="js/directives/angular-file.js"></script>
   <script src="js/filters/filters.js"></script>
   <script src="js/services/basePath.js"></script>
   <script src="js/services/PermissionFactory.js"></script>
@@ -41,7 +41,10 @@
 
 <body ng-controller="FileManagerCtr as FM" ng-cloak ng-hide="!FM.initialized">
 
-
+<div ngf-drop="FM.uploadFiles($files)" class="drop-box"
+  ngf-drag-over-class="'dragover'" ngf-multiple="true">
+  <div class="dragoverText"><i class="fa fa-download"></i> Drag it here</div>
+  <div class="mainContent">
   <div class="container mainMenu" style="padding:0px;">
     <nav class="navbar">
       <ul class="nav navbar-nav">
@@ -82,9 +85,6 @@
       </ul>
     </nav>
   </div>
-
-
-
 
   <div class="container">
   <nav class="navbar navbar-dark bg-primary" style="font-size:14px;">
@@ -149,6 +149,8 @@
       </tr>
       </tbody>
     </table>
+  </div>
+  </div>
   </div>
 </body>
 </html>

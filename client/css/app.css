@@ -157,3 +157,38 @@ span.searched{
 }
 
 /*-------------------------------------------------------*/
+.drop-box {
+    position:absolute;
+    top:0;
+    bottom:0;
+    right:0;
+    left:0;
+    z-index: -10;
+}
+
+.drop-box.dragover{
+    background-color: grey;
+    opacity: 0.4;
+    z-index:1000;
+}
+
+.dragoverText {
+    position: absolute;
+    font-size: 32px;
+    top: 45%;
+    left: 45%;
+    color: white;
+    display: none;
+}
+
+.drop-box.dragover > .dragoverText{
+    display: block;
+    z-index: -9999;
+}
+
+.drop-box > .mainContent{
+    display: block;
+}
+.drop-box.dragover > .mainContent{
+    display: none;
+}
