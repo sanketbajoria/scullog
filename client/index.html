@@ -41,7 +41,7 @@
 
 <body ng-controller="FileManagerCtr as FM" ng-cloak ng-hide="!FM.initialized">
 
-<div ngf-drop="FM.uploadFiles($files)" class="drop-box"
+<div ngf-drop="FM.uploads($files)" class="drop-box" ngf-drop-disabled="FM.hideBtn('upload_file')"
   ngf-drag-over-class="'dragover'" ngf-multiple="true">
   <div class="dragoverText"><i class="fa fa-download"></i> Drag it here</div>
   <div class="mainContent">

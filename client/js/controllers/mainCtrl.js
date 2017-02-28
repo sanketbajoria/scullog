@@ -1,6 +1,6 @@
 var FMApp = angular.module('FMApp');
 
-function FileManagerCtr($scope, $http, $location, $timeout, $uibModal, $attrs, $log, $q, Favorite, IconFinder, FileDownloader, PermissionFactory, toastr, serviceFactory, BasePath, $window) {
+function FileManagerCtr($scope, $http, $location, $timeout, $uibModal, $attrs, $log, $q, Favorite, IconFinder, FileDownloader, PermissionFactory, toastr, serviceFactory, BasePath, $window, Upload) {
     var FM = this;
     FM.getIcon = IconFinder.find;
     FM.accessTime = ['15m', '30m', '60m'];
@@ -95,7 +95,7 @@ function FileManagerCtr($scope, $http, $location, $timeout, $uibModal, $attrs, $
 
     $scope.$on('selectOne', function (data) {
         FM.curFiles.forEach(function (f) {
-            f.selected = (f==data.file);
+            f.selected = (f == data.file);
         });
     });
 
@@ -115,15 +115,15 @@ function FileManagerCtr($scope, $http, $location, $timeout, $uibModal, $attrs, $
         toastr.error(FM.errorData, "Error");
     });
 
-    angular.element($window).bind('resize', function(){
+    angular.element($window).bind('resize', function () {
         $scope.$emit('resize');
     });
 
-    $scope.$watch(function(){
+    $scope.$watch(function () {
         return BasePath.activePath();
-    }, function (val,old) {
-        if(val && old){
-            FM.curFolderPath == '/'?setCurFiles('/'):$location.url('/');
+    }, function (val, old) {
+        if (val && old) {
+            FM.curFolderPath == '/' ? setCurFiles('/') : $location.url('/');
             FM.curHashPath = '#/';
             FM.curFolderPath = '/';
             handleHashChange('#/');
@@ -134,39 +134,39 @@ function FileManagerCtr($scope, $http, $location, $timeout, $uibModal, $attrs, $
     //Public functions
 
     FM.menuOptions = function (file) {
-        if(!file.selected){
+        if (!file.selected) {
             FM.curFiles.forEach(function (f) {
-                f.selected = (f==file);
+                f.selected = (f == file);
             });
             FM.selection = [file];
         };
-        var actions = ['Create Folder',{
+        var actions = ['Create Folder', {
             name: 'Create File', perm: 'create_file', exec: FM.createFile
-        },{
-            name: 'Edit File', perm: 'update_file', exec: FM.updateFile
-        }, null, 'Move', 'Copy', null, 'Delete', 'Rename', {
-            name: 'Refresh', perm: 'refresh', exec: FM.refresh
-        }, null, {
-            name: 'Stream (Last 100 lines)', perm: 'stream', exec: function () { FM.stream(100); }
         }, {
-            name: 'Download (Last 1000 lines)', perm: 'stream', exec: function () { FM.partialDownload(1000); }
-        }, {
-            name: 'Download (Full)', perm: 'download', exec: FM.download
-        }];
-        var last=null;
-        var ret = actions.filter(function(a,i,arr){
-            var cur = a?!FM.hideBtn(_case(a.perm || a)):null;
-            if((cur === null && last !== null) || cur){
+                name: 'Edit File', perm: 'update_file', exec: FM.updateFile
+            }, null, 'Move', 'Copy', null, 'Delete', 'Rename', {
+                name: 'Refresh', perm: 'refresh', exec: FM.refresh
+            }, null, {
+                name: 'Stream (Last 100 lines)', perm: 'stream', exec: function () { FM.stream(100); }
+            }, {
+                name: 'Download (Last 1000 lines)', perm: 'stream', exec: function () { FM.partialDownload(1000); }
+            }, {
+                name: 'Download (Full)', perm: 'download', exec: FM.download
+            }];
+        var last = null;
+        var ret = actions.filter(function (a, i, arr) {
+            var cur = a ? !FM.hideBtn(_case(a.perm || a)) : null;
+            if ((cur === null && last !== null) || cur) {
                 last = a;
                 return true;
             }
             return false;
         }).map(function (a) {
-            return a ? [IconFinder.actionIcon(_case(a.perm || a),a.name || a), function ($itemScope) {
+            return a ? [IconFinder.actionIcon(_case(a.perm || a), a.name || a), function ($itemScope) {
                 a.exec ? a.exec() : FM.open(_case(a));
             }] : null;
         });
-        if(ret[ret.length-1]==null)
+        if (ret[ret.length - 1] == null)
             ret.pop();
         return ret;
     }
@@ -192,7 +192,7 @@ function FileManagerCtr($scope, $http, $location, $timeout, $uibModal, $attrs, $
     };
 
     FM.clickFile = function (file) {
-        file.folder?$location.path(decodeURIComponent(file.relPath)):downloadFile(file, BasePath);
+        file.folder ? $location.path(decodeURIComponent(file.relPath)) : downloadFile(file, BasePath);
     };
 
     FM.download = function () {
@@ -203,8 +203,8 @@ function FileManagerCtr($scope, $http, $location, $timeout, $uibModal, $attrs, $
 
     FM.refresh = function () {
         FM.refreshed = true;
-        var stopRefresh = function(){$timeout(function(){FM.refreshed = false;},1000)};
-        setCurFiles(FM.curFolderPath).then(stopRefresh,stopRefresh);
+        var stopRefresh = function () { $timeout(function () { FM.refreshed = false; }, 1000) };
+        setCurFiles(FM.curFolderPath).then(stopRefresh, stopRefresh);
     }
 
     FM.restartFM = function () {
@@ -212,9 +212,9 @@ function FileManagerCtr($scope, $http, $location, $timeout, $uibModal, $attrs, $
     }
 
     FM.updateFM = function () {
-        $http.get("/updateFM").then(function(res){
+        $http.get("/updateFM").then(function (res) {
             FM.successData = res.data;
-        }, function(err){
+        }, function (err) {
             FM.errorData = err.status + ': ' + err.data;
         });
     }
@@ -226,17 +226,9 @@ function FileManagerCtr($scope, $http, $location, $timeout, $uibModal, $attrs, $
         }
     };
 
-    FM.move = function (target) {
-        var url = 'api' + target;
-        var src = FM.selection.map(function (file) {
-            return {path: file.relPath, base: BasePath.activePath()};
-        });
-        httpRequest('PUT', url, {type: 'MOVE'}, {src: src});
-    };
-
     FM.partialDownload = function (lastLines) {
         var url = 'partialDownload' + FM.selection[0].relPath;
-        $http.get(url, {params: {buffer: lastLines || FM.lastLines}})
+        $http.get(url, { params: { buffer: lastLines || FM.lastLines } })
             .success(function (data) {
                 FileDownloader.download(FM.selection[0].name, data);
             })
@@ -245,29 +237,29 @@ function FileManagerCtr($scope, $http, $location, $timeout, $uibModal, $attrs, $
             });
     };
 
-    FM.service = function(){
-        serviceFactory.status().then(function(res){
-            FM.open('service', {services:res}, 'ServiceModalCtrl', 'lg');
+    FM.service = function () {
+        serviceFactory.status().then(function (res) {
+            FM.open('service', { services: res }, 'ServiceModalCtrl', 'lg');
         })
     }
 
-    FM.createFile = function(){
-        FM.open('edit', {name:'',content:''}, 'EditModalCtrl', 'lg');
+    FM.createFile = function () {
+        FM.open('edit', { name: '', content: '' }, 'EditModalCtrl', 'lg');
     }
 
     FM.updateFile = function (noCheck) {
         var fs = FM.selection[0];
-        if(!noCheck && !IconFinder.isEditable(fs)){
+        if (!noCheck && !IconFinder.isEditable(fs)) {
             FM.open('confirmEdit');
             return;
         }
-        if(fs.size > 2*1024*1024){
+        if (fs.size > 2 * 1024 * 1024) {
             toastr.warning("Unable to edit file greater than 2 MB", "Warning")
             return;
         }
-        $http.get('api' + fs.relPath, { transformResponse: function(d, h){return d;}})
+        $http.get('api' + fs.relPath, { transformResponse: function (d, h) { return d; } })
             .success(function (data) {
-                FM.open('edit', {name:fs.name,content:data,editMode:true}, 'EditModalCtrl', 'lg');
+                FM.open('edit', { name: fs.name, content: data, editMode: true }, 'EditModalCtrl', 'lg');
             })
             .error(function (data, status) {
                 FM.errorData = status + ': ' + data;
@@ -277,7 +269,7 @@ function FileManagerCtr($scope, $http, $location, $timeout, $uibModal, $attrs, $
     FM.stream = function (lastLines) {
         var url = 'stream' + FM.selection[0].relPath;
         $log.debug('stream url', url);
-        $http.get(url, {params: {buffer: lastLines || FM.lastLines}})
+        $http.get(url, { params: { buffer: lastLines || FM.lastLines } })
             .success(function (data) {
                 $log.info("Opening socket connection - " + data.channel);
                 var socket = new io.connect('/' + data.channel);
@@ -285,7 +277,7 @@ function FileManagerCtr($scope, $http, $location, $timeout, $uibModal, $attrs, $
                     $log.info("Closing socket connection: " + data.channel);
                     socket.close();
                 }
-                FM.open('stream', angular.extend({}, FM.selection[0], data, {socket: socket}), 'StreamModalCtrl', 'lg').then(closingSocket, closingSocket);
+                FM.open('stream', angular.extend({}, FM.selection[0], data, { socket: socket }), 'StreamModalCtrl', 'lg').then(closingSocket, closingSocket);
             })
             .error(function (data, status) {
                 FM.errorData = status + ': ' + data;
@@ -294,19 +286,27 @@ function FileManagerCtr($scope, $http, $location, $timeout, $uibModal, $attrs, $
 
     FM.copy = function (newName) {
         var url = 'api' + FM.selection[0].relPath;
-        var target = {path: FM.curFolderPath + newName, base: BasePath.activePath()};
-        httpRequest('PUT', url, {type: 'COPY'}, {target: target});
+        var target = { path: FM.curFolderPath + newName, base: BasePath.activePath() };
+        httpRequest('PUT', url, { type: 'COPY' }, { target: target });
     };
 
     FM.rename = function (newName) {
         var url = 'api' + FM.selection[0].relPath;
-        var target = {path: FM.curFolderPath + newName, base: BasePath.activePath()};
-        httpRequest('PUT', url, {type: 'RENAME'}, {target: target});
+        var target = { path: FM.curFolderPath + newName, base: BasePath.activePath() };
+        httpRequest('PUT', url, { type: 'RENAME' }, { target: target });
+    };
+
+    FM.move = function (target) {
+        var url = 'api' + target;
+        var src = FM.selection.map(function (file) {
+            return { path: file.relPath, base: BasePath.activePath() };
+        });
+        httpRequest('PUT', url, { type: 'MOVE' }, { src: src });
     };
 
     FM.createFolder = function (folderName) {
         var url = 'api' + FM.curFolderPath + folderName;
-        httpRequest('POST', url, {type: 'CREATE_FOLDER'}, null);
+        httpRequest('POST', url, { type: 'CREATE_FOLDER' }, null);
     };
 
     FM.upload = function (file) {
@@ -320,25 +320,47 @@ function FileManagerCtr($scope, $http, $location, $timeout, $uibModal, $attrs, $
         });
     };
 
-    FM.uploadFiles = function(files){
-        files.forEach(function(file){
+
+    // FM.upload = function (file) {
+    //     var url = 'api' + FM.curFolderPath + file.name;
+    //     file = file || FM.uploadFile;
+    //     Upload.upload({
+    //         url: url,
+    //         params: { type: 'UPLOAD_FILE' },
+    //         data: { upload: file },
+    //         transformRequest: angular.identity,
+    //         headers: { 'Content-Type': undefined }
+    //     }).then(function (resp) {
+    //         $log.debug(resp.data);
+    //         FM.successData = resp.data;
+    //         handleHashChange(FM.curHashPath);
+    //     }, function (resp) {
+    //         FM.errorData = resp.status + ': ' + resp.data;
+    //     }, function (evt) {
+    //         var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
+    //         $log.debug('progress: ' + progressPercentage + '% ');
+    //     });
+    // };
+
+    FM.uploads = function (files) {
+        files.forEach(function (file) {
             FM.upload(file);
         });
     }
 
-    FM.curPath = function(path){
-        return path?$location.url(path):FM.curFolderPath;
+    FM.curPath = function (path) {
+        return path ? $location.url(path) : FM.curFolderPath;
     }
 
-    FM.favorite = function(set){
+    FM.favorite = function (set) {
         var ret = !!Favorite.is(FM.curFolderPath);
-        if(set){
-            ret?Favorite.remove(FM.curFolderPath):Favorite.add(FM.curFolderPath);
+        if (set) {
+            ret ? Favorite.remove(FM.curFolderPath) : Favorite.add(FM.curFolderPath);
         }
         return ret;
     };
 
-    FM.favorites = function(){
+    FM.favorites = function () {
         return Favorite.get()[BasePath.activePath()] || {};
     }
 
@@ -379,13 +401,12 @@ function FileManagerCtr($scope, $http, $location, $timeout, $uibModal, $attrs, $
             case 'settings':
             case 'edit_favorite':
                 return false;
-            case 'favorite': return Object.keys(FM.favorites()).length==0;
+            case 'favorite': return Object.keys(FM.favorites()).length == 0;
             default:
                 return true;
         }
     }
 }
-
 
 function downloadFile(file, BasePath) {
     window.open('api' + file.relPath + "?base=" + BasePath.activePath());
@@ -395,18 +416,18 @@ function hash2paths(relPath, base) {
     var paths = [];
     var names = relPath.split('/');
     var path = '#/';
-    paths.push({name: 'Home (' + base +')', path: path});
+    paths.push({ name: 'Home (' + base + ')', path: path });
     for (var i = 0; i < names.length; ++i) {
         var name = names[i];
         if (name) {
             path = path + name + '/';
-            paths.push({name: name, path: path});
+            paths.push({ name: name, path: path });
         }
     }
     return paths;
 };
 
-function _case(s){
-    return s.toLowerCase().replace(" ","_");
+function _case(s) {
+    return s.toLowerCase().replace(" ", "_");
 }
 FMApp.controller('FileManagerCtr', FileManagerCtr);
