@@ -5,6 +5,7 @@ var cors = require('koa-cors');
 var morgan = require('koa-morgan');
 var mount = require('koa-mount');
 var koaStatic = require('koa-static');
+var compress = require('koa-compress');
 
 var app = koa();
 
@@ -66,72 +67,80 @@ var argv = require('yargs')
   .alias('v', 'version')
   .argv;
 
-co(function* () {
-  // resolve multiple promises in parallel
-  var res = yield [utils.read(`${base}/default.json`), utils.read(`${base}/main.json`)];
-  var conf = Object.assign(res[0], res[1]);
-  var remote = yield utils.read(argv.config || conf.config);
-  conf = Object.assign(conf, remote);
-  conf.port = argv.port || conf.port;
-  conf.directory = argv.directory || conf.directory;
-  conf.config = argv.config || conf.config;
-  conf.id = conf.id || "FMAccess-" + new Date().getTime();
+var init = function (options) {
+  options = options || {};
+  co(function* () {
+    // resolve multiple promises in parallel
+    var res = yield [utils.read(`${base}/default.json`), utils.read(`${base}/main.json`)];
+    var conf = Object.assign(res[0], res[1]);
+    var remote = yield utils.read(argv.config || conf.config);
+    conf = Object.assign(conf, remote);
+    conf.port = argv.port || options.port || conf.port;
+    conf.directory = argv.directory || options.directory || conf.directory;
+    conf.config = argv.config || conf.config;
+    conf.id = conf.id || "FMAccess-" + new Date().getTime();
 
-  global.C = {
-    data: {
-      root: conf.directory || path.dirname('.')
-    },
-    logger: require('tracer').console({
-      transport: function (data) {
-        console.log(data.output);
-        appLogStream.write(data.output + "\n");
-      }
-    })
-  };
-  global.C.conf = conf;
-  yield utils.write(`${base}/main.json`, conf);
-
-  if (argv.service) {
-    var service = require('./selfService');
-    if (!service) {
-      global.C.logger.info("Not supported platform. Currently, we support only windows, linux and Mac");
-      process.exit(0);
-    } else if (serviceOps.indexOf(argv.service) != -1 && service[argv.service]) {
-      service[argv.service]();
-    } else {
-      global.C.logger.info('Valid value are install/uninstall/start/stop/restart');
-      process.exit(0);
-    }
-  } else {
-
-    // Start Server
-    var Tools = require('./tools');
-
-    var startServer = function (app, port) {
-      server.listen(port, "127.0.0.1");
-      C.logger.info('listening on *.' + port);
+    global.C = {
+      data: {
+        root: conf.directory || path.dirname('.')
+      },
+      logger: require('tracer').console({
+        transport: function (data) {
+          console.log(data.output);
+          appLogStream.write(data.output + "\n");
+        }
+      })
     };
+    global.C.conf = conf;
+    yield utils.write(`${base}/main.json`, conf);
+
+    if (argv.service) {
+      var service = require('./selfService');
+      if (!service) {
+        global.C.logger.info("Not supported platform. Currently, we support only windows, linux and Mac");
+        process.exit(0);
+      } else if (serviceOps.indexOf(argv.service) != -1 && service[argv.service]) {
+        service[argv.service]();
+      } else {
+        global.C.logger.info('Valid value are install/uninstall/start/stop/restart');
+        process.exit(0);
+      }
+    } else {
+
+      // Start Server
+      var Tools = require('./tools');
+
+      var startServer = function (app, port) {
+        server.listen(port, "127.0.0.1");
+        C.logger.info('listening on *.' + port);
+      };
 
 
-    app.proxy = true;
-    app.use(morgan.middleware('combined', { stream: accessLogStream }));
-    app.use(cors());
-    app.use(Tools.handelError);
-    app.use(Tools.checkAccessCookie);
-    app.use(Tools.realIp);
-    var IndexRouter = require('./routes');
-    app.use(mount('/', IndexRouter));
-    app.use(koaStatic(path.join(__dirname, '../client/')));
-    app.use(koaStatic(path.join(__dirname, '../node_modules/')));
+      app.proxy = true;
+      app.use(compress());
+      app.use(morgan.middleware('combined', { stream: accessLogStream }));
+      app.use(cors());
+      app.use(Tools.handelError);
+      app.use(Tools.checkAccessCookie);
+      app.use(Tools.realIp);
+      var IndexRouter = require('./routes');
+      app.use(mount('/', IndexRouter));
+      app.use(koaStatic(path.join(__dirname, '../client/')));
+      app.use(koaStatic(path.join(__dirname, '../node_modules/')));
 
-    startServer(app, + conf.port);
+      startServer(app, + conf.port);
 
-    global.C.io = socketio.listen(server, { log: false });
-  }
+      global.C.io = socketio.listen(server, { log: false });
+    }
 
-});
+  });
+}
 
-
+if (require.main === module) {
+  init();
+} else {
+  module.exports = init;
+}
 
 
 

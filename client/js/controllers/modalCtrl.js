@@ -128,9 +128,8 @@
                 vm.services[service].locked=true;
                 serviceFactory[action.a](service).then(function(){
                     vm.services[service].status = action.s;
-                    vm.services[service].locked=false;
                     toastr.success(`Service ${service} ${action.m} successfully`, "Success")
-                }, function(){
+                }).finally(function(){
                     vm.services[service].locked=false;
                 });
             }

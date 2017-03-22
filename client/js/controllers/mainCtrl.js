@@ -75,6 +75,17 @@ function FileManagerCtr($scope, $http, $location, $timeout, $uibModal, $attrs, $
             });
     };
 
+    var downloadFile = function (file) {
+        var url = 'api' + file.relPath;
+        $http.get(url)
+            .success(function (data) {
+                FileDownloader.download(file.name, data, true);
+            })
+            .error(function (data, status) {
+                FM.errorData = status + ': ' + data;
+            });
+    }
+
     //Watching variable
 
     $q.all([PermissionFactory.$permissions, BasePath.$path]).then(function () {
@@ -192,12 +203,14 @@ function FileManagerCtr($scope, $http, $location, $timeout, $uibModal, $attrs, $
     };
 
     FM.clickFile = function (file) {
-        file.folder ? $location.path(decodeURIComponent(file.relPath)) : downloadFile(file, BasePath);
+        file.folder ? $location.path(decodeURIComponent(file.relPath)) : downloadFile(file);
     };
 
     FM.download = function () {
         for (var i in FM.selection) {
-            downloadFile(FM.selection[i], BasePath);
+            (function (i) {
+                downloadFile(FM.selection[i]);
+            })(i);
         }
     };
 
@@ -227,8 +240,8 @@ function FileManagerCtr($scope, $http, $location, $timeout, $uibModal, $attrs, $
     };
 
     FM.partialDownload = function (lastLines) {
-        var url = 'partialDownload' + FM.selection[0].relPath;
-        $http.get(url, { params: { buffer: lastLines || FM.lastLines } })
+        var url = 'api' + FM.selection[0].relPath;
+        $http.get(url, { params: { buffer: lastLines || FM.lastLines, type: 'PARTIAL_DOWNLOAD' } })
             .success(function (data) {
                 FileDownloader.download(FM.selection[0].name, data);
             })
@@ -267,9 +280,9 @@ function FileManagerCtr($scope, $http, $location, $timeout, $uibModal, $attrs, $
     }
 
     FM.stream = function (lastLines) {
-        var url = 'stream' + FM.selection[0].relPath;
+        var url = 'api' + FM.selection[0].relPath;
         $log.debug('stream url', url);
-        $http.get(url, { params: { buffer: lastLines || FM.lastLines } })
+        $http.get(url, { params: { buffer: lastLines || FM.lastLines, type: 'STREAM' } })
             .success(function (data) {
                 $log.info("Opening socket connection - " + data.channel);
                 var socket = new io.connect('/' + data.channel);
@@ -314,9 +327,9 @@ function FileManagerCtr($scope, $http, $location, $timeout, $uibModal, $attrs, $
         var formData = new FormData();
         formData.append('upload', file);
         var url = 'api' + FM.curFolderPath + file.name;
-        httpRequest('POST', url, {type: 'UPLOAD_FILE'}, formData, {
+        httpRequest('POST', url, { type: 'UPLOAD_FILE' }, formData, {
             transformRequest: angular.identity,
-            headers: {'Content-Type': undefined}
+            headers: { 'Content-Type': undefined }
         });
     };
 
@@ -407,10 +420,6 @@ function FileManagerCtr($scope, $http, $location, $timeout, $uibModal, $attrs, $
         }
     }
 }
-
-function downloadFile(file, BasePath) {
-    window.open('api' + file.relPath + "?base=" + BasePath.activePath());
-};
 
 function hash2paths(relPath, base) {
     var paths = [];

@@ -81,11 +81,11 @@ span.searched{
 
 
 /*Stream modal css properties*/
-.streamForm{
+.popoverForm{
     color: black;
     min-width: 154px;
 }
-.streamForm .form-group{
+.popoverForm .form-group{
     margin-bottom: 0px;
 }
 

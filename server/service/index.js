@@ -1,11 +1,11 @@
 var platform = require('os').platform();
 var Service;
 if(platform == 'win32'){
-    Service = require('./service/windowService');
+    Service = require('./windowService');
 }else if(platform == 'linux'){
-    Service = require('./service/linuxService');
+    Service = require('./linuxService');
 }else if(platform == 'darwin'){
-    Service = require('./service/linuxService');
+    Service = require('./linuxService');
 }
 
 module.exports = Service;

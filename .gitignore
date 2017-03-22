@@ -5,3 +5,5 @@ server/config/main.json
 server/config/favorite.json
 server/daemon
 logs
+e2e/logs
+e2e/tmp
