@@ -19,16 +19,15 @@ var co = require('co');
 var fs = require('co-fs');
 var utils = require('./utils');
 var origFS = require('fs');
-
+var fsExtra = require('fs-extra');
 
 var serviceOps = ['install', 'uninstall']
 var base = __dirname + '/config';
 
 var logPath = __dirname + '/logs';
 
-if (!origFS.existsSync(logPath)) {
-  origFS.mkdirSync(logPath);
-}
+fsExtra.ensureDirSync(logPath);
+fsExtra.ensureDirSync(__dirname + '/tmp');
 
 var stream = require('logrotate-stream');
 

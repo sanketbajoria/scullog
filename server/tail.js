@@ -19,7 +19,7 @@ var Tail = function (path, options) {
   if(options.exec){
     var res={};
     try{
-      res.text = childProcess.execSync('tail -n ' + options.buffer + " " + path, {maxBuffer: 5*1024*1024}).toString('utf-8');
+      res.text = childProcess.execSync('tail -n ' + options.buffer + " " + path, {maxBuffer: 10*1024*1024}).toString('utf-8');
     }catch(err){
       res.error = err.code;
     }

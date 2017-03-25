@@ -77,9 +77,10 @@ function FileManagerCtr($scope, $http, $location, $timeout, $uibModal, $attrs, $
 
     var downloadFile = function (file) {
         var url = 'api' + file.relPath;
-        $http.get(url)
+        // window.open('api' + file.relPath + "?base=" + BasePath.activePath() + "&type=DOWNLOAD");
+        $http.get(url, { params: { type: 'DOWNLOAD' }, responseType: 'arraybuffer' })
             .success(function (data) {
-                FileDownloader.download(file.name, data, true);
+                FileDownloader.download(file.name, data, true, file.folder);
             })
             .error(function (data, status) {
                 FM.errorData = status + ': ' + data;
@@ -390,9 +391,9 @@ function FileManagerCtr($scope, $http, $location, $timeout, $uibModal, $attrs, $
             case 'download':
                 if (FM.selection.length === 0) return true;
                 else {
-                    for (var i in FM.selection) {
+                    /*for (var i in FM.selection) {
                         if (FM.selection[i].folder) return true;
-                    }
+                    }*/
                     return false;
                 }
             case 'delete':

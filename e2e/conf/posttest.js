@@ -1,19 +1,18 @@
 var fsExtra = require("fs-extra");
 var fs = require("fs");
+var conf = require("../protractor.conf").config.params;
 
-var dir = require("os").homedir() + "/temp";
-if (fs.existsSync(dir)) {
-    fsExtra.removeSync(dir);
+if (fs.existsSync(conf.baseDir)) {
+    fsExtra.removeSync(conf.baseDir);
 }
 
-var pidFile = __dirname + '/../tmp/pid';
-if (fs.existsSync(pidFile)) {
-    var pid = fs.readFileSync(pidFile);
+if (fs.existsSync(conf.pidFile)) {
+    var pid = fs.readFileSync(conf.pidFile);
     try{
         process.kill(pid, "SIGKILL");
     }catch(err){
         console.log(err);
     }
-    fsExtra.removeSync(__dirname + '/../tmp');
+    fsExtra.removeSync(conf.tmpDir);
 }
 

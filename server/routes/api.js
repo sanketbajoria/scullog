@@ -5,6 +5,7 @@ var utils = require('../utils');
 var FileManager = require('../fileManager');
 var Tools = require('../tools');
 var formParser = require('co-busboy');
+var path = require('path');
 
 var api = function (router) {
   /** 
@@ -17,11 +18,17 @@ var api = function (router) {
     var type = this.query.type;
     var stats = yield fs.stat(p);
     if (stats.isDirectory()) {
-      if(!type){
+      if (!type) {
         this.body = yield* FileManager.list(p);
-      }else{
-       this.status = 400;
-       this.body = 'Cannot stream/download a directory'
+      } else if (type === 'DOWNLOAD') {
+        var tempZipPath = yield utils.zipFolder(p);
+        this.body = origFs.createReadStream(tempZipPath);
+        this.res.once('finish', function () {
+          origFs.unlink(tempZipPath);
+        });
+      } else {
+        this.status = 400;
+        this.body = 'Cannot stream/download a directory'
       }
     }
     else {

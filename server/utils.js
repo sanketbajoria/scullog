@@ -8,6 +8,9 @@ var origFs = require('fs');
 var admzip = require('adm-zip');
 var origRequest = require('request');
 var Promise = require('promise');
+var fsExtra = require("fs-extra");
+var origPath = require('path');
+var zip = require('node-zip-dir');
 
 var read = function* (path){
     var data = {};
@@ -82,11 +85,17 @@ var extractZip = function(path, extractTo) {
     });
 };
 
+var zipFolder = function *(path) {
+    var tempZipPath = __dirname + '/tmp/' + origPath.basename(path) + ".zip";
+    return zip.zip(path, tempZipPath);
+}
+
 
 var extractRemoteZip = function *(remotePath, localPath) {
-    var tempPath = './temp.zip'
+    var tempPath = __dirname + '/tmp/temp.zip'
     yield downloadFile(remotePath, tempPath);
     yield extractZip(tempPath, localPath);
+    fsExtra.removeSync(tempPath);
 };
 
 
@@ -95,6 +104,7 @@ module.exports = {
     write: write,
     versionCompare: versionCompare,
     extractRemoteZip: extractRemoteZip,
+    zipFolder: zipFolder,
     filePath: function (relPath, base) {
         if (relPath.indexOf('..') >= 0) {
             var e = new Error('Do Not Contain .. in relPath!');

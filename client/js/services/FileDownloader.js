@@ -3,9 +3,9 @@
     var FMApp = angular.module('FMApp');
 
     function FileDownloader() {
-        this.download = function (fileName, text, original) {
-            var content = new Blob([text], {type: 'text/plain;charset=utf-8'});
-            saveAs(content, (original?"":(new Date().getTime() + "_")) + fileName);
+        this.download = function (fileName, text, original, binary) {
+            var content = new Blob([text], {type: 'application/zip'});
+            saveAs(content, (original?"":(new Date().getTime() + "_")) + fileName + (binary?".zip":""));
         }
     }
 

@@ -1,4 +1,5 @@
 'use strict';
+var po = require("./po");
 
 describe('Privilege API', function () {
 
@@ -33,8 +34,8 @@ describe('Privilege API', function () {
   beforeEach(function () {
     browser.manage().deleteAllCookies();
     browser.get('http://localhost:9000/');
-    privilegeElem = element(by.xpath('//li/a[contains(text(),"Privilege")]/..'));
-    privilegeForm = $('.privilegeForm');
+    privilegeElem = po.getPrivilegeButton();
+    privilegeForm = po.getPrivilegeForm();
   });
 
   describe("Open the privilege form", function () {
@@ -63,7 +64,7 @@ describe('Privilege API', function () {
   it('in privilege mode, if delete cookie, and refresh screen, privilege mode should be gone', function () {
     getPrivilege();
     browser.manage().deleteAllCookies();
-    element(by.xpath('//li[contains(text(),"Refresh")]')).click();
+    po.getRefreshButton().click();
     browser.waitForAngular();
     expectPrivilegeFormClosedWithNoPrivilege();
   });

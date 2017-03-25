@@ -1,5 +1,10 @@
 //jshint strict: false
-var downloadDir = __dirname + '/tmp/downloads/';
+var os = require("os");
+
+var tmpDir = __dirname + "/tmp/";
+var pidFile = tmpDir + "/pid"
+var downloadDir = tmpDir + '/downloads/';
+
 exports.config = {
 
   allScriptsTimeout: 11000,
@@ -9,7 +14,11 @@ exports.config = {
   ],
 
   params: {
-    downloadDir: downloadDir
+    tmpDir: tmpDir,
+    pidFile: pidFile,
+    downloadDir: downloadDir,
+    logDir: __dirname + "/logs/",
+    baseDir: os.homedir() + "/temp/"
   },
 
   capabilities: {
