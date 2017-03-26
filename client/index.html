@@ -26,7 +26,11 @@
   <script src="js/services/contextMenu.js"></script>
   <script src="js/index.js"></script>
   <script src="js/controllers/mainCtrl.js"></script>
-  <script src="js/controllers/modalCtrl.js"></script>
+  <script src="js/controllers/modal/modalCtrl.js"></script>
+  <script src="js/controllers/modal/editModalCtrl.js"></script>
+  <script src="js/controllers/modal/serviceModalCtrl.js"></script>
+  <script src="js/controllers/modal/streamModalCtrl.js"></script>
+  <script src="js/controllers/modal/findModalCtrl.js"></script>
   <script src="js/filters/filters.js"></script>
   <script src="js/services/basePath.js"></script>
   <script src="js/services/PermissionFactory.js"></script>
@@ -92,6 +96,7 @@
       <li class="nav-item" ng-hide="FM.hideBtn('create_folder')" ng-click="FM.open('create_folder')"><span class="fa fa-plus-circle"></span> New Folder</li>
       <li class="nav-item" ng-hide="FM.hideBtn('create_file')" ng-click="FM.createFile()"><span class="fa fa-plus-circle"></span> New File</li>
       <li class="nav-item" ng-hide="FM.hideBtn('upload_file')" ng-click="FM.open('upload_File')"><span class="fa fa-upload"></span> Upload</li>
+      <li class="nav-item" ng-hide="FM.hideBtn('find')" ng-click="FM.findInFiles()"><span class="fa fa-search"></span> Find</li>
       <li class="nav-item" ng-hide="FM.hideBtn('update_file')" ng-click="FM.updateFile()"><span class="fa fa-edit"></span> Edit</li>
       <li class="nav-item" ng-hide="FM.hideBtn('move')" ng-click="FM.open('move')"><span class="fa fa-random"></span> Move</li>
       <li class="nav-item" ng-hide="FM.hideBtn('copy')" ng-click="FM.open('copy')"><span class="fa fa-copy"></span> Copy</li>

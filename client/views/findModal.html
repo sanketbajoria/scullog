@@ -1,0 +1,34 @@
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" ng-click="vm.no()">&times;</button>
+    <h4>Find in Files</h4>
+</div>
+<div class="modal-body">
+    <form>
+        <div class="form-group">
+            <label for="pattern" class="col-2 col-form-label">Find what:</label>
+            <div class="col-10">
+                <input class="form-control" type="text" ng-model="vm.criteria.pattern" id="pattern" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="fileMask" class="col-2 col-form-label">Filters:</label>
+            <div class="col-10">
+                <input class="form-control" type="text" id="fileMask" ng-model="vm.criteria.fileMask" />
+            </div>
+        </div>
+        <div class="form-check">
+            <label class="form-check-label">
+            <input class="form-check-input" type="checkbox" id="ignoreCase" ng-model="vm.criteria.ignoreCase" /> Case Insensitive
+            </label>
+        </div>
+        <div class="form-check">
+            <label class="form-check-label">
+            <input class="form-check-input" type="checkbox" id="recursive" ng-model="vm.criteria.recursive" /> Search Subdirectories
+            </label>
+        </div>
+    </form>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-default" ng-click="vm.no()">Cancel</button>
+    <button type="button" class="btn btn-primary" ng-click="vm.FM.find();vm.yes();">OK</button>
+</div>

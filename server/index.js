@@ -67,6 +67,14 @@ var argv = require('yargs')
   .argv;
 
 var init = function (options) {
+  global.C = {
+    logger: require('tracer').console({
+      transport: function (data) {
+        console.log(data.output);
+        appLogStream.write(data.output + "\n");
+      }
+    })
+  };
   options = options || {};
   co(function* () {
     // resolve multiple promises in parallel
@@ -79,18 +87,11 @@ var init = function (options) {
     conf.config = argv.config || conf.config;
     conf.id = conf.id || "FMAccess-" + new Date().getTime();
 
-    global.C = {
-      data: {
-        root: conf.directory || path.dirname('.')
-      },
-      logger: require('tracer').console({
-        transport: function (data) {
-          console.log(data.output);
-          appLogStream.write(data.output + "\n");
-        }
-      })
+    global.C.data = {
+      root: conf.directory || path.dirname('.')
     };
     global.C.conf = conf;
+    
     yield utils.write(`${base}/main.json`, conf);
 
     if (argv.service) {

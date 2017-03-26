@@ -10,7 +10,7 @@ exports.config = {
   allScriptsTimeout: 11000,
 
   specs: [
-    'tests/privilege.spec.js'
+    'tests/*.spec.js'
   ],
 
   params: {

@@ -17,6 +17,9 @@
 .fileTable tr th:hover{
     background-color: rgba(0,0,0,.075);
 }
+.fileTable tbody td a:hover{
+    border-bottom: 1.5px solid black;
+}
 
 li.highlighted{
     background-color: #f4a4a4;
@@ -78,7 +81,6 @@ span.searched{
     margin-right: 0px;
     padding: 0px;
 }
-
 
 /*Stream modal css properties*/
 .popoverForm{

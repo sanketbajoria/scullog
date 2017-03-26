@@ -28,7 +28,6 @@
     "co-views": "^2.1.0",
     "cross-spawn": "^4.0.0",
     "ejs": "^2.5.1",
-    "eslint": "^3.18.0",
     "file-saver": "^1.3.3",
     "forever": "^0.15.3",
     "forever-service": "^0.5.9",
@@ -50,6 +49,7 @@
     "request": "^2.75.0",
     "socket.io": "1.4.8",
     "tracer": "^0.8.0",
+    "typescript": "^2.2.1",
     "validator": "5.5.0",
     "yargs": "^5.0.0"
   },

@@ -11,7 +11,7 @@ describe('File API', function () {
   });
 
   var openFileDialog = function () {
-    po.getNewFileButton.click();
+    po.getNewFileButton().click();
     browser.sleep(1000);
   }
   var fileName = "test.log";

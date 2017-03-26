@@ -107,7 +107,7 @@ function FileManagerCtr($scope, $http, $location, $timeout, $uibModal, $attrs, $
 
     $scope.$on('selectOne', function (data) {
         FM.curFiles.forEach(function (f) {
-            f.selected = (f == data.file);
+            f.selected = (f === data.file);
         });
     });
 
@@ -259,6 +259,10 @@ function FileManagerCtr($scope, $http, $location, $timeout, $uibModal, $attrs, $
 
     FM.createFile = function () {
         FM.open('edit', { name: '', content: '' }, 'EditModalCtrl', 'lg');
+    }
+
+    FM.findInFiles = function () {
+        FM.open('find', { name: '', content: '' }, 'FindModalCtrl', 'lg');
     }
 
     FM.updateFile = function (noCheck) {
@@ -415,6 +419,7 @@ function FileManagerCtr($scope, $http, $location, $timeout, $uibModal, $attrs, $
             case 'settings':
             case 'edit_favorite':
                 return false;
+            case 'find': return FM.selection.length > 0
             case 'favorite': return Object.keys(FM.favorites()).length == 0;
             default:
                 return true;

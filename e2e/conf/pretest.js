@@ -13,7 +13,7 @@ var out = fs.openSync(logName, 'a');
 var err = fs.openSync(logName, 'a');
 
 fsExtra.ensureDirSync(conf.baseDir);
-
+console.log(conf.baseDir);
 var child = spawn("node", ["--harmony", __dirname + '/../../server/index.js', "-d", conf.baseDir, "-p", "9000"], {
     stdio: [ 'ignore', out, err ],
     detached: true
