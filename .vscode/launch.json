@@ -7,6 +7,24 @@
         {
             "type": "node",
             "request": "launch",
+            "name": "Launch Program via configuration file",
+            "program": "${workspaceRoot}\\server\\index.js",
+            "cwd": "${workspaceRoot}",
+            "runtimeArgs": [
+                "--harmony"
+            ],
+            "args": [
+                "-c",
+                "D:\\git\\scullog\\sample.json",
+                "-d",
+                "D:\\",
+                "-p",
+                "9000"
+            ]
+        },
+        {
+            "type": "node",
+            "request": "launch",
             "name": "Launch Program",
             "program": "${workspaceRoot}\\server\\index.js",
             "cwd": "${workspaceRoot}",
@@ -16,6 +34,8 @@
             "args": [
                 "-d",
                 "C:\\",
+                "-d",
+                "D:\\",
                 "-p",
                 "9000"
             ]

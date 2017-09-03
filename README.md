@@ -106,11 +106,26 @@ http{
 }
 ```
 
+# SSL Support
+To start scullog with ssl support, pass the ssl certificate and ssl key in configuration file in below format
+```json
+{
+  "ssl": {
+    "key": "",
+    "certificate": ""
+  }
+}
+```
+Sample configuration file, can be found <a href="https://raw.githubusercontent.com/sanketbajoria/scullog/master/default.json">here</a>
+
+
 # RoadMap
 - <s>Docker Image</s>
+- <s>Reverse Proxy support</s>
+- <s>SSL Support</s>
 - Change file permissions and attributes.
 - Better layout design for better accessibility (utilize full screen)
 - Execute custom cmd for better control.
 - View Images and videos 
 - PDF viewer
-- Drag n drop functionality for file upload
+- <s>Drag n drop functionality for file upload</s>

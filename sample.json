@@ -1,0 +1,43 @@
+{
+  "actions": {
+    "default": [
+      "download",
+      "stream",
+      "refresh",
+      "privilege",
+	  "change_base",
+      "favorite",
+      "edit_favorite"
+    ],
+    "elevated": [
+      "delete",
+      "move",
+      "copy",
+      "create_file",
+      "update_file",
+      "rename",
+      "upload_file",
+      "create_folder",
+      "download",
+      "stream",
+      "refresh",
+      "service",
+      "change_base",
+      "favorite",
+      "edit_favorite"
+    ]
+  },
+  "port": 9000,
+  "morganFormat": "combined",
+  "services": [
+    "Apache CouchDB"
+  ],
+  "directory": [
+	"C:\\",
+	"D:\\"
+  ],
+  "ssl": {
+    "key":"D:\\git\\server.pem",
+    "certificate": "D:\\git\\server.crt"
+  }
+}

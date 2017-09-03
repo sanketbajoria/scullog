@@ -9,16 +9,14 @@ var compress = require('koa-compress');
 
 var app = koa();
 
-var server = require('http').createServer(app.callback());
 var path = require('path');
 var socketio = require('socket.io');
 var tail = require('./tail');
 var tracer = require('tracer');
 var crypto = require('crypto');
 var co = require('co');
-var fs = require('co-fs');
+var fs = require('fs');
 var utils = require('./utils');
-var origFS = require('fs');
 var fsExtra = require('fs-extra');
 
 var serviceOps = ['install', 'uninstall']
@@ -109,7 +107,17 @@ var init = function (options) {
 
       // Start Server
       var Tools = require('./tools');
-
+      var server = null;
+      if (conf.ssl && conf.ssl.key && conf.ssl.certificate) {
+        server = require('https').createServer({
+          key: fs.readFileSync(conf.ssl.key),
+          cert: fs.readFileSync(conf.ssl.certificate)
+        }, app.callback());
+      } else {
+        server = require('http').createServer(app.callback());
+      }
+      
+      
       var startServer = function (app, port) {
         server.listen(port, "127.0.0.1");
         C.logger.info('listening on *.' + port);
