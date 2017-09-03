@@ -63,6 +63,49 @@ Dependends on Unix style tail command
 - Windows -- Install Git for Windows. It will install unix command in the path.
 - Linux/Mac -- Support automatically
 
+# Setting up Reverse Proxy via Nginx
+## Path based reverse proxy
+Suppose, you are running scullog at localhost:9000, and wanted to run at localhost:8888/scullog, then below configuration
+```
+http{
+  map $http_upgrade $connection_upgrade {
+      default upgrade;
+      '' close;
+  }
+  server {
+		listen	8888;
+	  server_name  localhost;
+		location /scullog {
+			rewrite ^/scullog/?(.*) /$1 break;
+			proxy_pass http://127.0.0.1:9000;
+			proxy_http_version 1.1;
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection $connection_upgrade;
+		}
+	}
+}
+```
+## Port based reverse proxy
+Suppose, you are running scullog at localhost:9000, and wanted to run at localhost:8888, then below configuration
+```
+http{
+  map $http_upgrade $connection_upgrade {
+      default upgrade;
+      '' close;
+  }
+  server {
+		listen	8888;
+	  server_name  localhost;
+		location / {
+			proxy_pass http://127.0.0.1:9000;
+			proxy_http_version 1.1;
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection $connection_upgrade;
+		}
+	}
+}
+```
+
 # RoadMap
 - <s>Docker Image</s>
 - Change file permissions and attributes.

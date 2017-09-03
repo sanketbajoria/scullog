@@ -290,7 +290,7 @@ function FileManagerCtr($scope, $http, $location, $timeout, $uibModal, $attrs, $
         $http.get(url, { params: { buffer: lastLines || FM.lastLines, type: 'STREAM' } })
             .success(function (data) {
                 $log.info("Opening socket connection - " + data.channel);
-                var socket = new io.connect('/' + data.channel);
+                var socket = new io.connect("/" + data.channel, {path: window.location.pathname + "socket.io"});
                 var closingSocket = function () {
                     $log.info("Closing socket connection: " + data.channel);
                     socket.close();

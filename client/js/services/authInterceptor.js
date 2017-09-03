@@ -10,6 +10,9 @@
                     config.params.base = BasePath.activePath();
                 }
                 config.headers["access-role"] = PermissionFactory.getRole();
+                if(config.url && config.url[0] == '/'){
+                    config.url = config.url.slice(1);
+                }
                 return config;
             },
             response: function (response) {
