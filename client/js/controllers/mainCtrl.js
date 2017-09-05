@@ -1,6 +1,6 @@
 var FMApp = angular.module('FMApp');
 
-function FileManagerCtr($scope, $http, $location, $timeout, $uibModal, $attrs, $log, $q, Favorite, IconFinder, FileDownloader, PermissionFactory, toastr, serviceFactory, BasePath, $window, Upload) {
+function FileManagerCtr($scope, $http, $location, $timeout, $uibModal, $attrs, $log, $q, Favorite, IconFinder, FileDownloader, PermissionFactory, toastr, serviceFactory, BasePath, $window, Upload, cfpLoadingBar) {
     var FM = this;
     FM.getIcon = IconFinder.find;
     FM.accessTime = ['15m', '30m', '60m'];
@@ -56,7 +56,7 @@ function FileManagerCtr($scope, $http, $location, $timeout, $uibModal, $attrs, $
             url: url,
             params: params,
             data: data,
-            timeout: 10000
+            timeout: 45000
         };
         for (var k in config) {
             if (config.hasOwnProperty(k)) {
@@ -327,38 +327,46 @@ function FileManagerCtr($scope, $http, $location, $timeout, $uibModal, $attrs, $
         httpRequest('POST', url, { type: 'CREATE_FOLDER' }, null);
     };
 
-    FM.upload = function (file) {
+    /* FM.upload = function (file) {
         file = file || FM.uploadFile;
         var formData = new FormData();
         formData.append('upload', file);
         var url = 'api' + FM.curFolderPath + file.name;
         httpRequest('POST', url, { type: 'UPLOAD_FILE' }, formData, {
             transformRequest: angular.identity,
-            headers: { 'Content-Type': undefined }
+            headers: {
+                'Content-Type': undefined
+            },
+            timeout: 120000
         });
-    };
+    };  */
 
 
-    // FM.upload = function (file) {
-    //     var url = 'api' + FM.curFolderPath + file.name;
-    //     file = file || FM.uploadFile;
-    //     Upload.upload({
-    //         url: url,
-    //         params: { type: 'UPLOAD_FILE' },
-    //         data: { upload: file },
-    //         transformRequest: angular.identity,
-    //         headers: { 'Content-Type': undefined }
-    //     }).then(function (resp) {
-    //         $log.debug(resp.data);
-    //         FM.successData = resp.data;
-    //         handleHashChange(FM.curHashPath);
-    //     }, function (resp) {
-    //         FM.errorData = resp.status + ': ' + resp.data;
-    //     }, function (evt) {
-    //         var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
-    //         $log.debug('progress: ' + progressPercentage + '% ');
-    //     });
-    // };
+    FM.upload = function (file) {
+        file = file || FM.uploadFile;
+        var url = 'api' + FM.curFolderPath + file.name;
+        Upload.upload({
+            url: url,
+            params: { type: 'UPLOAD_FILE' },
+            data: { upload: file },
+            transformRequest: angular.identity,
+            headers: { 'Content-Type': undefined },
+            timeout: 120000,
+            resumeChunkSize: '5MB',
+            ignoreLoadingBar: true
+        }).then(function (resp) {
+            $log.debug(resp.data);
+            FM.successData = resp.data;
+            handleHashChange(FM.curHashPath);
+        }, function (resp) {
+            FM.errorData = resp.status + ': ' + resp.data;
+        }, function (evt) {
+            cfpLoadingBar.start();
+            var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
+            cfpLoadingBar.set(progressPercentage/100.0);
+            $log.debug('progress: ' + progressPercentage + '% ');
+        });
+    }; 
 
     FM.uploads = function (files) {
         files.forEach(function (file) {

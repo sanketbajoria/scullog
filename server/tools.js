@@ -39,7 +39,7 @@ module.exports = {
 
   checkPathNotExists: function *(next) {
     // Must after loadRealPath
-    if (yield fs.exists(this.request.fPath)) {
+    if (this.query.type != 'UPLOAD_FILE' && (yield fs.exists(this.request.fPath))) {
       this.status = 400;
       this.body = 'Path Has Exists!';
     }

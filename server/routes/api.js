@@ -4,7 +4,7 @@ var origFs = require('fs');
 var utils = require('../utils');
 var FileManager = require('../fileManager');
 var Tools = require('../tools');
-var formParser = require('co-busboy');
+var parser = require('co-busboy');
 var path = require('path');
 
 var api = function (router) {
@@ -112,7 +112,6 @@ var api = function (router) {
    * Create Folder
    */
   router.post('/api/(.*)', Tools.loadRealPath, Tools.checkPathNotExists, bodyParser(), function* () {
-    global.C.logger.info("reached here");
     var type = this.query.type;
     var p = this.request.fPath;
     if (!type) {
@@ -124,16 +123,15 @@ var api = function (router) {
       this.body = 'Create Folder Succeed!';
     }
     else if (type === 'UPLOAD_FILE') {
-      var formData = yield formParser(this.req);
-      if (formData.fieldname === 'upload') {
-        var writeStream = origFs.createWriteStream(p);
-        formData.pipe(writeStream);
-        this.body = 'Upload File Succeed!';
-      }
-      else {
-        this.status = 400;
-        this.body = 'Lack Upload File!';
-      }
+      var parts = parser(this, {
+        autoFields: true
+      });
+      var part;
+      while (part = yield parts) {
+        var isFirstChunk = !parts.field._chunkNumber || parts.field._chunkNumber=='0';
+        part.pipe(origFs.createWriteStream(p, {flags: isFirstChunk?'w':'a'}))
+      } 
+      this.body = 'Upload File Succeed!';
     }
     else if (type === 'WRITE_FILE') {
       try {
