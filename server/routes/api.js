@@ -1,6 +1,7 @@
 var bodyParser = require('koa-bodyparser');
 var fs = require('co-fs');
 var origFs = require('fs');
+var fse = require('co-fs-extra');
 var utils = require('../utils');
 var FileManager = require('../fileManager');
 var Tools = require('../tools');
@@ -123,6 +124,7 @@ var api = function (router) {
       this.body = 'Create Folder Succeed!';
     }
     else if (type === 'UPLOAD_FILE') {
+      yield fse.ensureDir(path.dirname(p));
       var parts = parser(this, {
         autoFields: true
       });

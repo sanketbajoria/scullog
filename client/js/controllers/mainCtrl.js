@@ -344,7 +344,7 @@ function FileManagerCtr($scope, $http, $location, $timeout, $uibModal, $attrs, $
 
     FM.upload = function (file) {
         file = file || FM.uploadFile;
-        var url = 'api' + FM.curFolderPath + file.name;
+        var url = 'api' + FM.curFolderPath + (file.path || file.name);
         Upload.upload({
             url: url,
             params: { type: 'UPLOAD_FILE' },
