@@ -4,7 +4,7 @@
 
     function FileDownloader() {
         this.download = function (fileName, text, original, binary) {
-            var content = new Blob([text], {type: 'application/zip'});
+            var content = new Blob([text], {type: binary?'application/zip':'application/octet-stream'});
             saveAs(content, (original?"":(new Date().getTime() + "_")) + fileName + (binary?".zip":""));
         }
     }

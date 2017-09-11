@@ -25,6 +25,16 @@
         {
             "type": "node",
             "request": "launch",
+            "name": "Launch Program via test",
+            "program": "${workspaceRoot}\\server\\test.js",
+            "cwd": "${workspaceRoot}",
+            "runtimeArgs": [
+                "--harmony"
+            ]
+        },
+        {
+            "type": "node",
+            "request": "launch",
             "name": "Launch Program",
             "program": "${workspaceRoot}\\server\\index.js",
             "cwd": "${workspaceRoot}",
@@ -37,7 +47,7 @@
                 "-d",
                 "D:\\",
                 "-p",
-                "9000"
+                "9100"
             ]
         },
         {

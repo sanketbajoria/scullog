@@ -2,11 +2,19 @@
 (function () {
     var FMApp = angular.module('FMApp', ['ui.bootstrap.contextMenu', 'ui.bootstrap', 'luegg.directives', 'angular-loading-bar', 'toastr', 'ngFileUpload']);
 
-    FMApp.config(function($httpProvider, $uibTooltipProvider, $logProvider, $compileProvider){
+    FMApp.config(function($httpProvider, $uibTooltipProvider, $logProvider, $compileProvider, toastrConfig){
         $httpProvider.interceptors.push('authInterceptor');
         $uibTooltipProvider.options({"placement":"bottom"});
-        $logProvider.debugEnabled(false);
+        $logProvider.debugEnabled(true);
         $compileProvider.debugInfoEnabled(false);
+        angular.extend(toastrConfig, {
+            maxOpened: 0,    
+            newestOnTop: true,
+            preventDuplicates: false,
+            preventOpenDuplicates: false,
+            closeButton: true,
+            timeout: 4000
+          });
     });
 
 })();

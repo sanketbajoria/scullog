@@ -1,4 +1,4 @@
-//var co = require('co');
+/* //var co = require('co');
 //var grep = require('./cmd/grep');
 
 
@@ -23,4 +23,10 @@ console.log(new ilib.Address("MARY ROE\nMEGASYSTEMS INC\nSUITE 5A-1204\n799 E DR
 
 //console.log(new ilib.Address("CHRIS NISWANDEE\nSMALLSYS INC\n795 E DRAGRAM\nTUCSON AZ 85705\nUSA"));
 
-console.log(new ilib.Address("CHRIS NISWANDEE\nBITBOOST\nPOB 65502\nTUCSON AZ 85728\nUSA"));
+console.log(new ilib.Address("CHRIS NISWANDEE\nBITBOOST\nPOB 65502\nTUCSON AZ 85728\nUSA")); */
+
+var server = require('./index.js')({
+    port: 8888,
+    directory: ["C:\\"],
+    config: __dirname + "/../sample.json"
+})

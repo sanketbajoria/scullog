@@ -1,7 +1,4 @@
 var bodyParser = require('koa-bodyparser');
-var fs = require('co-fs');
-var origFs = require('fs');
-var fse = require('co-fs-extra');
 var utils = require('../utils');
 var FileManager = require('../fileManager');
 var Tools = require('../tools');
@@ -17,15 +14,15 @@ var api = function (router) {
   router.get('/api/(.*)', Tools.loadRealPath, Tools.checkPathExists, function* () {
     var p = this.request.fPath;
     var type = this.query.type;
-    var stats = yield fs.stat(p);
-    if (stats.isDirectory()) {
+    var stats = yield* FileManager.getStats(p);
+    if (stats.folder) {
       if (!type) {
         this.body = yield* FileManager.list(p);
       } else if (type === 'DOWNLOAD') {
         var tempZipPath = yield utils.zipFolder(p);
-        this.body = origFs.createReadStream(tempZipPath);
+        this.body = FileManager.createReadStream(tempZipPath);
         this.res.once('finish', function () {
-          origFs.unlink(tempZipPath);
+          FileManager.unlink(tempZipPath);
         });
       } else {
         this.status = 400;
@@ -44,7 +41,7 @@ var api = function (router) {
       } else if (type === 'STREAM') {
         this.body = FileManager.stream(p, this.request.query);
       } else {
-        this.body = origFs.createReadStream(p);
+        this.body =  FileManager.createReadStream(p);
       }
     }
   });
@@ -95,7 +92,7 @@ var api = function (router) {
     }
     else if (type === 'WRITE_FILE') {
       try {
-        yield fs.writeFile(p, utils.normalizeContent(this.request.body.content));
+        yield FileManager.writeFile(p, utils.normalizeContent(this.request.body.content));
         this.body = 'Edit File Succeed!';
       } catch (err) {
         this.status = 400;
@@ -124,20 +121,20 @@ var api = function (router) {
       this.body = 'Create Folder Succeed!';
     }
     else if (type === 'UPLOAD_FILE') {
-      yield fse.ensureDir(path.dirname(p));
+      yield FileManager.mkdirs(path.dirname(p));
       var parts = parser(this, {
         autoFields: true
       });
       var part;
       while (part = yield parts) {
         var isFirstChunk = !parts.field._chunkNumber || parts.field._chunkNumber=='0';
-        part.pipe(origFs.createWriteStream(p, {flags: isFirstChunk?'w':'a'}))
+        part.pipe(FileManager.createWriteStream(p, {flags: isFirstChunk?'w':'a'}))
       } 
       this.body = 'Upload File Succeed!';
     }
     else if (type === 'WRITE_FILE') {
       try {
-        yield fs.writeFile(p, utils.normalizeContent(this.request.body.content));
+        yield FileManager.writeFile(p, utils.normalizeContent(this.request.body.content));
         this.body = 'Create File Succeed!';
       } catch (err) {
         C.logger.error(err.stack);

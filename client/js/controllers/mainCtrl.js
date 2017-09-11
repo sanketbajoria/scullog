@@ -16,8 +16,6 @@ function FileManagerCtr($scope, $http, $location, $timeout, $uibModal, $attrs, $
     FM.renameName = '';             // new name for rename action
     FM.uploadFile = null;           // will upload file
     FM.newFolderName = '';
-    FM.successData = '__init__';
-    FM.errorData = '__init__';
     $scope.sortType = 'name'; // set the default sort type
     $scope.sortReverse = false;  // set the default sort order
     // Private functions
@@ -42,6 +40,7 @@ function FileManagerCtr($scope, $http, $location, $timeout, $uibModal, $attrs, $
         if (!hash) {
             return $location.path('/');
         }
+        hash = decodeURIComponent(hash);
         $log.debug('Hash change: ' + hash);
         var relPath = hash.slice(1);
         FM.curHashPath = hash;
@@ -117,14 +116,16 @@ function FileManagerCtr($scope, $http, $location, $timeout, $uibModal, $attrs, $
         });
     });
 
-    $scope.$watch('FM.successData', function () {
-        if (FM.successData === '__init__') return;
-        toastr.success(FM.successData, "Success");
-    });
-
-    $scope.$watch('FM.errorData', function () {
-        if (FM.errorData === '__init__') return;
-        toastr.error(FM.errorData, "Error");
+    Object.defineProperties(FM, {
+        successData: {
+            set(v) {
+                toastr.success(v, "Success");
+            }
+        }, errorData: {
+            set(v) {
+                toastr.error(v, "Error");
+            }
+        }
     });
 
     angular.element($window).bind('resize', function () {

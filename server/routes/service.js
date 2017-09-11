@@ -1,5 +1,5 @@
 var router = require('koa-router')();
-var svc = require('../service');
+var svc = require('../fileManager').getService();
 var actions = ["start", "stop", "status", "restart"];
 
 var api = function (router) {
