@@ -18,7 +18,7 @@
     background-color: rgba(0,0,0,.075);
 }
 .fileTable tbody td a:hover{
-    border-bottom: 1.5px solid black;
+    border-bottom: 0.8px solid black;
 }
 
 li.highlighted{
@@ -115,7 +115,7 @@ span.searched{
     list-style: none;
     padding-left: 0px;
     font-size:14px;
-    line-height:1.5;
+    line-height:0.8;
     font-family: 'Merriweather', Georgia, sans-serif;
 }
 
@@ -193,4 +193,14 @@ span.searched{
 }
 .drop-box.dragover > .mainContent{
     display: none;
+}
+
+.edit.myModal .modal-header .secondary *{ font-size: 12px; line-height: 1;  }
+.edit.myModal .modal-header .secondary select{
+    height: 1.5rem;
+    padding: 0.15rem;
+}
+
+.edit.myModal .modal-header .secondary li{
+    margin-right: 0px;
 }

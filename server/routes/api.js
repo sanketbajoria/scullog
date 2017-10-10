@@ -16,32 +16,23 @@ var api = function (router) {
     var type = this.query.type;
     var stats = yield* FileManager.getStats(p);
     if (stats.folder) {
-      if (!type) {
-        this.body = yield* FileManager.list(p);
-      } else if (type === 'DOWNLOAD') {
-        var tempZipPath = yield utils.zipFolder(p);
-        this.body = FileManager.createReadStream(tempZipPath);
+      if (type === 'DOWNLOAD') {
+        var tempZipPath = yield FileManager.zipFolder(p);
+        this.body = yield FileManager.createReadStream(tempZipPath);
         this.res.once('finish', function () {
           FileManager.unlink(tempZipPath);
         });
       } else {
-        this.status = 400;
-        this.body = 'Cannot stream/download a directory'
+        this.body = yield* FileManager.list(p);
       }
     }
     else {
       if (type === 'PARTIAL_DOWNLOAD') {
-        var res = FileManager.partialDownload(p, this.request.query);
-        if (res.error) {
-          this.status = 400;
-          this.body = "Bad request! " + res.error;
-        } else {
-          this.body = res.text;
-        }
+        this.body = yield FileManager.partialDownload(p, this.request.query);
       } else if (type === 'STREAM') {
         this.body = FileManager.stream(p, this.request.query);
       } else {
-        this.body =  FileManager.createReadStream(p);
+        this.body =  yield FileManager.createReadStream(p);
       }
     }
   });
@@ -73,7 +64,7 @@ var api = function (router) {
       var src = this.request.body.src;
       if (!src || !(src instanceof Array)) return this.status = 400;
       var src = src.map(function (s) {
-        return utils.filePath(s.path, s.base);
+        return FileManager.filePath(s.path, s.base);
       });
       yield* FileManager.move(src, p);
       this.body = 'Move Succeed!';
@@ -81,18 +72,18 @@ var api = function (router) {
     else if (type === 'RENAME') {
       var target = this.request.body.target;
       if (!target) return this.status = 400;
-      yield* FileManager.rename(p, utils.filePath(target.path, target.base));
+      yield* FileManager.rename(p, FileManager.filePath(target.path, target.base));
       this.body = 'Rename Succeed!';
     }
     else if (type === 'COPY') {
       var target = this.request.body.target;
       if (!target) return this.status = 400;
-      yield* FileManager.copy(p, utils.filePath(target.path, target.base));
+      yield* FileManager.copy(p, FileManager.filePath(target.path, target.base));
       this.body = 'Copy Succeed!';
     }
     else if (type === 'WRITE_FILE') {
       try {
-        yield FileManager.writeFile(p, utils.normalizeContent(this.request.body.content));
+        yield FileManager.writeFile(p, this.request.body.content);
         this.body = 'Edit File Succeed!';
       } catch (err) {
         this.status = 400;
@@ -121,20 +112,20 @@ var api = function (router) {
       this.body = 'Create Folder Succeed!';
     }
     else if (type === 'UPLOAD_FILE') {
-      yield FileManager.mkdirs(path.dirname(p));
+      yield* FileManager.mkdirs(path.dirname(p));
       var parts = parser(this, {
         autoFields: true
       });
       var part;
       while (part = yield parts) {
         var isFirstChunk = !parts.field._chunkNumber || parts.field._chunkNumber=='0';
-        part.pipe(FileManager.createWriteStream(p, {flags: isFirstChunk?'w':'a'}))
+        part.pipe(yield FileManager.createWriteStream(p, {flags: isFirstChunk?'w':'a'}))
       } 
       this.body = 'Upload File Succeed!';
     }
     else if (type === 'WRITE_FILE') {
       try {
-        yield FileManager.writeFile(p, utils.normalizeContent(this.request.body.content));
+        yield FileManager.writeFile(p, this.request.body.content);
         this.body = 'Create File Succeed!';
       } catch (err) {
         C.logger.error(err.stack);

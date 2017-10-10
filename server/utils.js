@@ -1,4 +1,3 @@
-var path = require('path');
 var os = require('os');
 var platform = require('os').platform();
 var co = require('co');
@@ -10,7 +9,6 @@ var origRequest = require('request');
 var Promise = require('promise');
 var fsExtra = require("fs-extra");
 var origPath = require('path');
-var zip = require('node-zip-dir');
 
 var read = function* (path){
     var data = {};
@@ -85,12 +83,6 @@ var extractZip = function(path, extractTo) {
     });
 };
 
-var zipFolder = function *(path) {
-    var tempZipPath = __dirname + '/tmp/' + origPath.basename(path) + ".zip";
-    return zip.zip(path, tempZipPath);
-}
-
-
 var extractRemoteZip = function *(remotePath, localPath) {
     var tempPath = __dirname + '/tmp/temp.zip'
     yield downloadFile(remotePath, tempPath);
@@ -104,30 +96,7 @@ module.exports = {
     write: write,
     versionCompare: versionCompare,
     extractRemoteZip: extractRemoteZip,
-    zipFolder: zipFolder,
-    filePath: function (relPath, base) {
-        if (relPath.indexOf('..') >= 0) {
-            var e = new Error('Do Not Contain .. in relPath!');
-            e.status = 400;
-            throw e;
-        }else if(!!!base || global.C.data.root.indexOf(base)==-1){
-            var e = new Error('Invalid base location');
-            e.status = 400;
-            throw e;
-        }else {
-            return path.join(base, relPath);
-        }
-    },
     getPermissions: function(role){
         return global.C.conf.actions[role] || global.C.conf.actions.default;
-    },
-    normalizeContent: function(content){
-        if(platform == 'win32' && content.indexOf("\r\n")==-1 && content.indexOf("\n")!=-1){
-            return content.replace(/\n/g,"\r\n");
-        }else if((platform == 'linux' || platform == 'darwin') && content.indexOf("\r\n")!=-1){
-            return content.replace(/\r\n/g,"\n");
-        }
-        return content;
     }
-
 };

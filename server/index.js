@@ -11,7 +11,6 @@ var app = koa();
 
 var path = require('path');
 var socketio = require('socket.io');
-var tail = require('./tail');
 var tracer = require('tracer');
 var crypto = require('crypto');
 var co = require('co');
@@ -75,7 +74,12 @@ var init = function (options) {
       })
     };
     options = options || {};
+    /* function abc(){
+      return ["asdf"];
+    } */
     co(function* () {
+      //console.log(yield abc());
+
       // resolve multiple promises in parallel
       var res = yield [utils.read(`${base}/default.json`), utils.read(`${base}/main.json`)];
       var conf = Object.assign(res[0], res[1]);
@@ -85,12 +89,15 @@ var init = function (options) {
       conf.directory = argv.directory || options.directory || conf.directory;
       conf.config = argv.config || options.config || conf.config;
       conf.id = conf.id || "FMAccess-" + new Date().getTime();
-      conf.fileManager = options.fileManager || conf.fileManager;
+      var fileManager = options.fileManager || conf.fileManager;
 
       global.C.data = {
         root: conf.directory || path.dirname('.')
       };
-      global.C.conf = conf;
+      global.C.conf = Object.assign({}, {fileManager: fileManager}, conf);
+      if(typeof fileManager == 'string'){
+        conf.fileManager = fileManager;
+      }
 
       yield utils.write(`${base}/main.json`, conf);
 
@@ -123,7 +130,7 @@ var init = function (options) {
         var startServer = function (app, port) {
           server.listen(port, "127.0.0.1");
           C.logger.info('listening on *.' + port + " on " + (conf.ssl ? "https" : "http"));
-          resolve();
+          resolve(port);
         };
 
 
@@ -151,7 +158,10 @@ var init = function (options) {
 if (require.main === module) {
   init();
 } else {
-  module.exports = init;
+  module.exports = {
+    init: init,
+    NodeFileManager: require('./fileManager/NodeFileManager')
+  };
 }
 
 

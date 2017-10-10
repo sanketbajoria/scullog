@@ -1,6 +1,5 @@
 var fileManager = require('./fileManager');
 var jwt = require('jsonwebtoken');
-var FilePath = require('./utils').filePath;
 
 module.exports = {
   realIp: function* (next) {
@@ -21,7 +20,7 @@ module.exports = {
 
   loadRealPath: function* (next) {
     // router url format must be /api/(.*)
-    this.request.fPath = FilePath(this.params[0], this.request.query.base);
+    this.request.fPath = fileManager.filePath(this.params[0], this.request.query.base);
     C.logger.info(this.request.fPath);
     yield* next;
   },

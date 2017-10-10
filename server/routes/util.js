@@ -3,6 +3,7 @@ var fs = require('co-fs');
 var utils = require('../utils');
 var grep = require('../cmd/grep');
 var jwt = require('jsonwebtoken');
+var fileManager = require('../fileManager');
 
 var api = function (router) {
   /**
@@ -42,8 +43,8 @@ var api = function (router) {
    */
   router.post('/find', bodyParser(), function* () {
     var criteria = this.request.body.criteria;
-    var folderPath = utils.filePath(criteria.folder, this.request.query.base);
-    if (criteria.pattern && (yield fs.exists(folderPath))) {
+    var folderPath = fileManager.filePath(criteria.folder, this.request.query.base);
+    if (criteria.pattern && (yield fileManager.exists(folderPath))) {
       criteria.folder = folderPath;
       try {
         this.body = yield grep.exec(criteria);

@@ -1,6 +1,6 @@
 var FMApp = angular.module('FMApp');
 
-function FileManagerCtr($scope, $http, $location, $timeout, $uibModal, $attrs, $log, $q, Favorite, IconFinder, FileDownloader, PermissionFactory, toastr, serviceFactory, BasePath, $window, Upload, cfpLoadingBar) {
+function FileManagerCtr($scope, $http, $location, $timeout, $uibModal, $attrs, $log, $q, Favorite, IconFinder, FileDownloader, PermissionFactory, toastr, serviceFactory, BasePath, $window, Upload, cfpLoadingBar, Editor) {
     var FM = this;
     FM.getIcon = IconFinder.find;
     FM.accessTime = ['15m', '30m', '60m'];
@@ -110,11 +110,11 @@ function FileManagerCtr($scope, $http, $location, $timeout, $uibModal, $attrs, $
         });
     });
 
-    $scope.$watch('FM.selectAll', function (nv) {
+    FM.toggleSelectAll = function(){
         FM.curFiles.forEach(function (file) {
-            file.selected = nv;
+            file.selected = FM.selectAll;
         });
-    });
+    }
 
     Object.defineProperties(FM, {
         successData: {
@@ -184,7 +184,7 @@ function FileManagerCtr($scope, $http, $location, $timeout, $uibModal, $attrs, $
         return ret;
     }
 
-    FM.open = function (m, data, ctrl, size) {
+    FM.open = function (m, data, ctrl, size, noRefresh) {
         var modalName = "./views/" + $attrs.$normalize(m) + "Modal.html";
         var modalInstance = $uibModal.open({
             animation: true,
@@ -201,7 +201,9 @@ function FileManagerCtr($scope, $http, $location, $timeout, $uibModal, $attrs, $
                 }
             }
         });
-        return modalInstance.result.then(FM.refresh, FM.refresh);
+        return modalInstance.result.finally(function(){if(!noRefresh){
+            FM.refresh();
+        }});
     };
 
     FM.clickFile = function (file) {
@@ -268,8 +270,8 @@ function FileManagerCtr($scope, $http, $location, $timeout, $uibModal, $attrs, $
 
     FM.updateFile = function (noCheck) {
         var fs = FM.selection[0];
-        if (!noCheck && !IconFinder.isEditable(fs)) {
-            FM.open('confirmEdit');
+        if (!noCheck && !Editor.getModeForPath(fs.name)) {
+            FM.open('confirmEdit', null, null, null, true);
             return;
         }
         if (fs.size > 2 * 1024 * 1024) {
@@ -328,7 +330,7 @@ function FileManagerCtr($scope, $http, $location, $timeout, $uibModal, $attrs, $
         httpRequest('POST', url, { type: 'CREATE_FOLDER' }, null);
     };
 
-    /* FM.upload = function (file) {
+    /* var upload = function (file) {
         file = file || FM.uploadFile;
         var formData = new FormData();
         formData.append('upload', file);
@@ -343,12 +345,11 @@ function FileManagerCtr($scope, $http, $location, $timeout, $uibModal, $attrs, $
     };  */
 
 
-    FM.upload = function (file) {
-        file = file || FM.uploadFile;
-        var url = 'api' + FM.curFolderPath + (file.path || file.name);
+    var upload = function (file) {
+        var url = 'api' + FM.curFolderPath + (file.relativePath || file.name);
         Upload.upload({
             url: url,
-            params: { type: 'UPLOAD_FILE' },
+            params: { type: file.type=='directory'?'CREATE_FOLDER':'UPLOAD_FILE' },
             data: { upload: file },
             transformRequest: angular.identity,
             headers: { 'Content-Type': undefined },
@@ -358,7 +359,6 @@ function FileManagerCtr($scope, $http, $location, $timeout, $uibModal, $attrs, $
         }).then(function (resp) {
             $log.debug(resp.data);
             FM.successData = resp.data;
-            handleHashChange(FM.curHashPath);
         }, function (resp) {
             FM.errorData = resp.status + ': ' + resp.data;
         }, function (evt) {
@@ -369,9 +369,24 @@ function FileManagerCtr($scope, $http, $location, $timeout, $uibModal, $attrs, $
         });
     }; 
 
-    FM.uploads = function (files) {
-        files.forEach(function (file) {
-            FM.upload(file);
+    FM.upload = function (files) {
+        var paths = [];
+        files = angular.isArray(files)?files:[files];
+        $q.all(files.map(function (file) {
+            if(file.type == 'directory'){
+                paths.push(file.name);
+            }else if(file.path){
+                var temp = file.path.replace(/\\/g, "/");
+                for(var i=paths.length-1;i>=0;i--){
+                    if(temp.indexOf(paths[i] + "/" + file.name) >= 0){
+                        file.relativePath = paths[i] + "/" + file.name;
+                        break;
+                    }
+                }
+            }
+            return upload(file);
+        })).finally(function(){
+            handleHashChange(FM.curHashPath);
         });
     }
 

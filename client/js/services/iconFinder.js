@@ -43,8 +43,6 @@
             'download': 'fa-download',
             'stream': 'fa-feed'
         };
-        var editableExtensions = ["txt", "text", "conf", "def", "list", "log", "in", "ini", "bash", "sh", "csh", "ksh", "bat", "cmd", "nt", "c", "cpp", "cs", "html", "htm", "xml", "xslt", "xsd", "java", "js", "json", "jsp", "css", "iss", "sql", "ps", "ps1", "psm1", "mt", "mtr"];
-
         var find = function (mime) {
             var icon;
             for (var key in keywords) {
@@ -71,13 +69,6 @@
                 } else {
                     return icons["file"];
                 }
-            },
-            isEditable: function(fs){
-                var ext = fs.name.split('.').pop();
-                if(fs.name && ext){
-                    return editableExtensions.indexOf(ext)!=-1;
-                }
-                return false;
             },
             actionIcon: function(action, title){
                 return "<span class='fa " + actionIcon[action] + "'></span> " + title;
