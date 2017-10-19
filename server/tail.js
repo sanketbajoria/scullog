@@ -8,6 +8,7 @@ var sanitizer = require('validator');
 var os = require('os');
 
 var kill = function(tail){
+  tail.emit('close');
   tail.stdout.removeAllListeners();
   tail.stderr.removeAllListeners();
   tail.removeAllListeners();
