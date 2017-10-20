@@ -76,14 +76,28 @@ function FileManagerCtr($scope, $http, $location, $timeout, $uibModal, $attrs, $
 
     var downloadFile = function (file) {
         var url = 'api' + file.relPath;
-        // window.open('api' + file.relPath + "?base=" + BasePath.activePath() + "&type=DOWNLOAD");
-        $http.get(url, { params: { type: 'DOWNLOAD' }, responseType: 'arraybuffer' })
+
+        var temporaryDownloadLink = document.createElement("a");
+        temporaryDownloadLink.style.display = 'none';
+    
+        document.body.appendChild( temporaryDownloadLink );
+    
+        temporaryDownloadLink.setAttribute( 'href', 'api' + file.relPath + "?base=" + BasePath.activePath() + "&type=DOWNLOAD" );
+        temporaryDownloadLink.setAttribute( 'download', file.name );
+
+        temporaryDownloadLink.click();
+    
+        document.body.removeChild( temporaryDownloadLink );
+
+        //window.open('api' + file.relPath + "?base=" + BasePath.activePath() + "&type=DOWNLOAD", "Download");
+        //window.location.href = 'api' + file.relPath + "?base=" + BasePath.activePath() + "&type=DOWNLOAD";
+        /* $http.get(url, { params: { type: 'DOWNLOAD' }, responseType: 'arraybuffer' })
             .success(function (data) {
                 FileDownloader.download(file.name, data, true, file.folder);
             })
             .error(function (data, status) {
                 FM.errorData = status + ': ' + data;
-            });
+            }); */
     }
 
     //Watching variable
@@ -118,11 +132,11 @@ function FileManagerCtr($scope, $http, $location, $timeout, $uibModal, $attrs, $
 
     Object.defineProperties(FM, {
         successData: {
-            set(v) {
+            set: function(v) {
                 toastr.success(v, "Success");
             }
         }, errorData: {
-            set(v) {
+            set: function(v) {
                 toastr.error(v, "Error");
             }
         }
@@ -211,10 +225,14 @@ function FileManagerCtr($scope, $http, $location, $timeout, $uibModal, $attrs, $
     };
 
     FM.download = function () {
+        var c = 0;
         for (var i in FM.selection) {
             (function (i) {
-                downloadFile(FM.selection[i]);
+                setTimeout(function(){
+                    downloadFile(FM.selection[i]);
+                }, c*500);
             })(i);
+            ++c;
         }
     };
 

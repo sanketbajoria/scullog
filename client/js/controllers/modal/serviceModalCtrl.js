@@ -16,7 +16,7 @@
                 vm.services[service].locked=true;
                 serviceFactory[action.a](service).then(function(){
                     vm.services[service].status = action.s;
-                    toastr.success(`Service ${service} ${action.m} successfully`, "Success")
+                    toastr.success("Service " + service + " " +  action.m + " successfully", "Success")
                 }).finally(function(){
                     vm.services[service].locked=false;
                 });
@@ -27,7 +27,7 @@
         vm.status = function(){
             serviceFactory.status().then(function(data){
                 vm.services = initService(data);
-                toastr.success(`All service status updated successfully`, "Success")
+                toastr.success("All service status updated successfully", "Success")
             });
         }
 

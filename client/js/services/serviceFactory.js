@@ -13,7 +13,7 @@
                                     return res.data.data;
                                 }, function(err){
                                     $log.error(err.status, err.data);
-                                    toastr.error(`Failed, ${service} ${action}`,"Error");
+                                    toastr.error("Failed, " + service + " " + action,"Error");
                                     return $q.reject(err);
                                 });
                             }

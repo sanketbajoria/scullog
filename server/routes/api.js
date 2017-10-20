@@ -18,6 +18,7 @@ var api = function (router) {
     if (stats.folder) {
       if (type === 'DOWNLOAD') {
         var tempZipPath = yield FileManager.zipFolder(p);
+        this.response.attachment(path.basename(p) + ".zip");
         this.body = yield FileManager.createReadStream(tempZipPath);
         this.res.once('finish', function () {
           FileManager.unlink(tempZipPath);
@@ -32,6 +33,7 @@ var api = function (router) {
       } else if (type === 'STREAM') {
         this.body = FileManager.stream(p, this.request.query);
       } else {
+        this.response.attachment();
         this.body =  yield FileManager.createReadStream(p);
       }
     }
