@@ -18,10 +18,10 @@ var restart = function () {
   }, 1000);
 }
 
-var api = function (router) {
+var api = function (router, scullog) {
   router.get('/updateFM', function* () {
     global.C.logger.info("Updating server");
-    var remote = yield utils.read(global.C.conf.remoteJSON);
+    var remote = yield utils.read(scullog.getConfiguration().remoteJSON);
     var local = yield utils.read(`${base}/package.json`);
     var c = utils.versionCompare(remote['version'], local['version']);
     if (c === false) {
@@ -32,7 +32,7 @@ var api = function (router) {
     }
     if (!!!this.body) {
       try {
-        yield utils.extractRemoteZip(global.C.conf.remoteLocation, `${base}`);
+        yield utils.extractRemoteZip(scullog.getConfiguration().remoteLocation, `${base}`);
       } catch (err) {
         C.logger.error(err.stack);
         this.status = 400;

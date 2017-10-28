@@ -28,7 +28,7 @@ if(platform == 'win32'){
         }
         this.install = function(){
             installForever();
-            shell.exec(`node ${conf.cwd}/../node_modules/forever-service/bin/forever-service install -s ${conf.cwd}/index.js --start ${conf.name}`, {async: true}, function(code, output){
+            shell.exec(`node ${conf.cwd}/../node_modules/forever-service/bin/forever-service install -s ${conf.cwd}/service.js --start ${conf.name}`, {async: true}, function(code, output){
                 if(code == 0){
                     executeCB('install');
                 }
@@ -60,7 +60,7 @@ if(Service){
     svc = new Service({
         name:'Scullog',
         description: 'File Manager over a browser.',
-        script: 'server/index.js',
+        script: 'server/service.js',
         cwd: __dirname
     });
 

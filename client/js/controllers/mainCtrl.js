@@ -74,21 +74,10 @@ function FileManagerCtr($scope, $http, $location, $timeout, $uibModal, $attrs, $
             });
     };
 
-    var downloadFile = function (file) {
-        var url = 'api' + file.relPath;
-
-        var temporaryDownloadLink = document.createElement("a");
-        temporaryDownloadLink.style.display = 'none';
-    
-        document.body.appendChild( temporaryDownloadLink );
-    
-        temporaryDownloadLink.setAttribute( 'href', 'api' + file.relPath + "?base=" + BasePath.activePath() + "&type=DOWNLOAD" );
-        temporaryDownloadLink.setAttribute( 'download', file.name );
-
-        temporaryDownloadLink.click();
-    
-        document.body.removeChild( temporaryDownloadLink );
-
+    var downloadFile = function (file, url) {
+        var url = 'api' + file.relPath + "?base=" + BasePath.activePath() + "&type=DOWNLOAD" ;
+        download(file, url);
+        
         //window.open('api' + file.relPath + "?base=" + BasePath.activePath() + "&type=DOWNLOAD", "Download");
         //window.location.href = 'api' + file.relPath + "?base=" + BasePath.activePath() + "&type=DOWNLOAD";
         /* $http.get(url, { params: { type: 'DOWNLOAD' }, responseType: 'arraybuffer' })
@@ -98,6 +87,20 @@ function FileManagerCtr($scope, $http, $location, $timeout, $uibModal, $attrs, $
             .error(function (data, status) {
                 FM.errorData = status + ': ' + data;
             }); */
+    }
+
+    var download = function(file, url){
+        var temporaryDownloadLink = document.createElement("a");
+        temporaryDownloadLink.style.display = 'none';
+    
+        document.body.appendChild( temporaryDownloadLink );
+    
+        temporaryDownloadLink.setAttribute( 'href', url);
+        temporaryDownloadLink.setAttribute( 'download', file.name );
+
+        temporaryDownloadLink.click();
+    
+        document.body.removeChild( temporaryDownloadLink );
     }
 
     //Watching variable
@@ -262,14 +265,16 @@ function FileManagerCtr($scope, $http, $location, $timeout, $uibModal, $attrs, $
     };
 
     FM.partialDownload = function (lastLines) {
-        var url = 'api' + FM.selection[0].relPath;
-        $http.get(url, { params: { buffer: lastLines || FM.lastLines, type: 'PARTIAL_DOWNLOAD' } })
+        var url = 'api' + FM.selection[0].relPath + "?base=" + BasePath.activePath() + "&type=PARTIAL_DOWNLOAD&buffer=" + (lastLines || FM.lastLines);
+        download(FM.selection[0], url);
+        /*var url = 'api' + FM.selection[0].relPath;
+         $http.get(url, { params: { buffer: lastLines || FM.lastLines, type: 'PARTIAL_DOWNLOAD' } })
             .success(function (data) {
                 FileDownloader.download(FM.selection[0].name, data);
             })
             .error(function (data, status) {
                 FM.errorData = status + ': ' + data;
-            });
+            }); */
     };
 
     FM.service = function () {

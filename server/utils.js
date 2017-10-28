@@ -95,8 +95,5 @@ module.exports = {
     read: read,
     write: write,
     versionCompare: versionCompare,
-    extractRemoteZip: extractRemoteZip,
-    getPermissions: function(role){
-        return global.C.conf.actions[role] || global.C.conf.actions.default;
-    }
+    extractRemoteZip: extractRemoteZip
 };

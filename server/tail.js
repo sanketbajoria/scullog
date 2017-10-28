@@ -39,7 +39,7 @@ var Tail = function (path, options, fileManager) {
       var lines = data.toString('utf-8').split(os.EOL);
       lines = lines.filter(function(l){
         return !!l;
-      }).map(function(l){return sanitizer.escape(l)});
+      }).map(function(l){return l;/* sanitizer.escape(l) */});
       lines.forEach(function (line) {
         this._buffer.enq(line);
       }.bind(this));

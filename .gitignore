@@ -1,7 +1,7 @@
 node_modules/
 .idea
-server/config/main.json
-server/config/favorite.json
+server/config/*/main.json
+server/config/*/favorite.json
 server/daemon
 logs
 e2e/logs

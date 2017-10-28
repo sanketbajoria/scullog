@@ -1,14 +1,13 @@
-var router = require('koa-router')();
-var svc = require('../fileManager').getService();
 var actions = ["start", "stop", "status", "restart"];
 
-var api = function (router) {
+var api = function (router, scullog) {
+  var svc = scullog.getFileManager().getService();
   /**
    * Start Stop, or Check Status of Service
    */
   router.get("/service", function* () {
     var action = this.request.query.a;
-    var service = this.request.query.s || (action == 'status' && global.C.conf.services);
+    var service = this.request.query.s || (action == 'status' && scullog.getConfiguration().services);
     var res = {};
     if (actions.indexOf(action) == -1 || !service) {
       res.error = `Invalid action ${action} on service ${service}`;

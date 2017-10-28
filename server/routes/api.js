@@ -1,11 +1,11 @@
 var bodyParser = require('koa-bodyparser');
 var utils = require('../utils');
-var FileManager = require('../fileManager');
-var Tools = require('../tools');
 var parser = require('co-busboy');
 var path = require('path');
 
-var api = function (router) {
+var api = function (router, scullog) {
+  var FileManager = scullog.getFileManager();
+  var Tools = new require('../tools')(scullog);
   /** 
    * To list directory
    * Full/Partial Download file content
@@ -29,6 +29,7 @@ var api = function (router) {
     }
     else {
       if (type === 'PARTIAL_DOWNLOAD') {
+        this.response.attachment(new Date().getTime() + "_" + path.basename(p));
         this.body = yield FileManager.partialDownload(p, this.request.query);
       } else if (type === 'STREAM') {
         this.body = FileManager.stream(p, this.request.query);
@@ -55,7 +56,7 @@ var api = function (router) {
    * Copy File
    * Update File
    */
-  router.put('/api/(.*)', Tools.loadRealPath, Tools.checkPathExists, bodyParser(), function* () {
+  router.put('/api/(.*)', Tools.checkBase, Tools.loadRealPath, Tools.checkPathExists, bodyParser(), function* () {
     var type = this.query.type;
     var p = this.request.fPath;
     if (!type) {

@@ -114,9 +114,8 @@ span.searched{
 .stream .modal-body ul {
     list-style: none;
     padding-left: 0px;
-    font-size:14px;
-    line-height:0.8;
-    font-family: 'Merriweather', Georgia, sans-serif;
+    font-size: 13px;
+    line-height: 1;
 }
 
 .stream .modal-body ul li{

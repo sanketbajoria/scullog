@@ -13,20 +13,25 @@ var platform = require('os').platform();
 const util = require('util');
 var childProcess = require('child_process');
 var zip = require('node-zip-dir');
+var Readable = require('stream').Readable;
 
 class NodeFileManager {
+
+  constructor(scullog){
+    this.scullog = scullog;
+  }
+
+  getPath(){
+    return path;
+  }
 
   filePath(relPath, base) {
     if (relPath.indexOf('..') >= 0) {
       var e = new Error('Do Not Contain .. in relPath!');
       e.status = 400;
       throw e;
-    } else if (!!!base || global.C.data.root.indexOf(base) == -1) {
-      var e = new Error('Invalid base location');
-      e.status = 400;
-      throw e;
     } else {
-      return path.join(base, relPath);
+      return this.getPath().join(base, relPath);
     }
   }
 
@@ -130,12 +135,13 @@ class NodeFileManager {
 
   stream(src, query) {
     var filesNamespace = crypto.createHash('md5').update(src).digest('hex');
+    var io = this.scullog.getSocketServer();
     global.C.logger.info("Received stream request: " + filesNamespace);
     if (!tailMap[filesNamespace]) {
       global.C.logger.info("Tail channel doesn't exist: " + filesNamespace);
       tailMap[filesNamespace] = tail(src, query, this);
       tailCount[filesNamespace] = 0;
-      var filesSocket = global.C.io.of('/' + filesNamespace).on('connection', function (socket) {
+      var filesSocket = io.of('/' + filesNamespace).on('connection', function (socket) {
         //Initial emit to new connections
         socket.emit('line', tailMap[filesNamespace].getBuffer().reverse());
         //On disconnect of a connection
@@ -146,7 +152,7 @@ class NodeFileManager {
           global.C.logger.info("Client count on channel: " + tailCount[filesNamespace]);
           if (tailCount[filesNamespace] == 0 && tailMap[filesNamespace]) {
             global.C.logger.info("Killing the tail channel: " + filesNamespace);
-            global.C.io.of('/' + filesNamespace).removeAllListeners();
+            io.of('/' + filesNamespace).removeAllListeners();
             tailMap[filesNamespace].removeAllListeners();
             tailMap[filesNamespace].kill();
             tailMap[filesNamespace] = null;
@@ -165,7 +171,13 @@ class NodeFileManager {
 
   partialDownload(src, query) {
     query.exec = true;
-    return tail(src, query, this);
+    return tail(src, query, this).then(function(data){
+      var s = new Readable();
+      s._read = function noop() {}; 
+      s.push(data);
+      s.push(null);
+      return Promise.resolve(s);
+    });
   }
 
   execCmd() {

@@ -3,14 +3,16 @@ var fs = require('co-fs');
 var utils = require('../utils');
 var grep = require('../cmd/grep');
 var jwt = require('jsonwebtoken');
-var fileManager = require('../fileManager');
 
-var api = function (router) {
+var api = function (router, scullog) {
+  var fileManager = scullog.getFileManager();
+  var Tools = new require('../tools')(scullog);
+
   /**
-   * Get Current Base Directory
+   * Get Base Directories
    */
   router.get('/base', function* () {
-    this.body = global.C.data.root;
+    this.body = scullog.getConfiguration().directory;
   });
 
   /**
@@ -22,26 +24,26 @@ var api = function (router) {
     var accessJwt;
     if (expiresIn) {
       role = "elevated";
-      accessJwt = jwt.sign({ role: role }, global.C.conf.secret, { expiresIn: expiresIn });
-      this.cookies.set(global.C.conf.id, accessJwt, { httpOnly: true })
+      accessJwt = jwt.sign({ role: role }, scullog.getConfiguration().secret, { expiresIn: expiresIn });
+      this.cookies.set(scullog.getConfiguration().id, accessJwt, { httpOnly: true })
     } else {
-      accessJwt = this.cookies.get(global.C.conf.id);
+      accessJwt = this.cookies.get(scullog.getConfiguration().id);
       if (accessJwt) {
         try {
-          role = jwt.verify(accessJwt, global.C.conf.secret).role;
+          role = jwt.verify(accessJwt, scullog.getConfiguration().secret).role;
         } catch (e) {
-          this.cookies.set(global.C.conf.id, '', { httpOnly: true, expires: new Date(1) })
+          this.cookies.set(scullog.getConfiguration().id, '', { httpOnly: true, expires: new Date(1) })
         }
       }
     }
-    this.body = { permissions: utils.getPermissions(role), role: role };
+    this.body = { permissions: scullog.getConfiguration().actions[role] || scullog.getConfiguration().actions.default, role: role };
   });
 
   /**
    * Search text over a path
    * {pattern: "", folder: "", recursive: "", fileMask: "", regex: "extended", ignoreCase: true/false, wholeWord: ""} 
    */
-  router.post('/find', bodyParser(), function* () {
+  router.post('/find', Tools.checkBase, bodyParser(), function* () {
     var criteria = this.request.body.criteria;
     var folderPath = fileManager.filePath(criteria.folder, this.request.query.base);
     if (criteria.pattern && (yield fileManager.exists(folderPath))) {

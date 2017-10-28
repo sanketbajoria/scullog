@@ -1,22 +1,25 @@
 var utils = require('../utils');
 var router = require('koa-router')();
 var bodyParser = require('koa-bodyparser');
-var base = __dirname + "/..";
-var fileManager = require("../fileManager");
 
-var favorites;
 
 /**
  * Favorites CRUD Operation
  */
-var api = function (router) {
+var api = function (router, scullog) {
+  var favorites;
+  var fileManager = scullog.getFileManager();
+  var Tools = new require('../tools')(scullog);
+  
+  var base = `${__dirname}/../${scullog.getConfiguration().id}`;
+  
   router.get('/favorite', function* () {
     if (!favorites)
       favorites = yield utils.read(`${base}/config/favorite.json`);
     this.body = favorites;
   });
 
-  router.post('/favorite', bodyParser(), function* () {
+  router.post('/favorite', Tools.checkBase, bodyParser(), function* () {
     fileManager.filePath(this.request.body.path, this.request.query.base);
     favorites[this.request.query.base] = favorites[this.request.query.base] || {};
     favorites[this.request.query.base][this.request.body.path] = this.request.body.name;
