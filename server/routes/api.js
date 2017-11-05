@@ -18,6 +18,8 @@ var api = function (router, scullog) {
     if (stats.folder) {
       if (type === 'DOWNLOAD') {
         var tempZipPath = yield FileManager.zipFolder(p);
+        var zipStats = yield* FileManager.getStats(tempZipPath);
+        this.response.length = zipStats.size;
         this.response.attachment(path.basename(p) + ".zip");
         this.body = yield FileManager.createReadStream(tempZipPath);
         this.res.once('finish', function () {
@@ -34,6 +36,7 @@ var api = function (router, scullog) {
       } else if (type === 'STREAM') {
         this.body = FileManager.stream(p, this.request.query);
       } else {
+        this.response.length = stats.size;
         this.response.attachment();
         this.body =  yield FileManager.createReadStream(p);
       }
