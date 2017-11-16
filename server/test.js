@@ -24,9 +24,24 @@ console.log(new ilib.Address("MARY ROE\nMEGASYSTEMS INC\nSUITE 5A-1204\n799 E DR
 //console.log(new ilib.Address("CHRIS NISWANDEE\nSMALLSYS INC\n795 E DRAGRAM\nTUCSON AZ 85705\nUSA"));
 
 console.log(new ilib.Address("CHRIS NISWANDEE\nBITBOOST\nPOB 65502\nTUCSON AZ 85728\nUSA")); */
-
+/* 
 var server = require('./index.js')({
     port: 8888,
     directory: ["C:\\"],
     config: __dirname + "/../sample.json"
 })
+ */
+
+var request = require('request');
+var co = require('co');
+
+
+var res = co(function* () {
+    console.log(yield new Promise((resolve, reject) => {
+        request("https://raw.githubusercontent.com/cthackers/adm-zip/master/package.json", (err, response, body) => {
+            if(err)
+                reject(err);
+            resolve(body);
+        });
+    }));
+});

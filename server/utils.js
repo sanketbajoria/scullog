@@ -2,11 +2,9 @@ var os = require('os');
 var platform = require('os').platform();
 var co = require('co');
 var fs = require('co-fs');
-var request = require('co-request');
 var origFs = require('fs');
 var admzip = require('adm-zip');
-var origRequest = require('request');
-var Promise = require('promise');
+var request = require('request');
 var fsExtra = require("fs-extra");
 var origPath = require('path');
 
@@ -16,7 +14,13 @@ var read = function* (path){
         try {
             var res;
             if(path.indexOf('http') != -1){
-                res = (yield request(path)).body;
+                res = yield new Promise((resolve, reject) => {
+                                request(path, (err, response, body) => {
+                                    if (err)
+                                        reject(err);
+                                    resolve(body);
+                                });
+                            });
             }else{
                 res = yield fs.readFile(path, 'utf8')
             }
@@ -57,13 +61,13 @@ var versionCompare = function(left, right) {
 }
 
 var downloadFile = function(url, filepath) {
-    return new Promise(function(resolve, reject) {
+    return new Promise((resolve, reject) => {
         try {
             var stream = origFs.createWriteStream(filepath);
             stream.on('finish', function() {
                 return resolve(true);
             });
-            return origRequest(url).pipe(stream);
+            return request(url).pipe(stream);
         } catch (e) {
             return reject(e);
         }
@@ -71,7 +75,7 @@ var downloadFile = function(url, filepath) {
 };
 
 var extractZip = function(path, extractTo) {
-    return new Promise(function(resolve, reject) {
+    return new Promise((resolve, reject) => {
         try {
             var zip = new admzip(path);
             var zipEntries = zip.getEntries();

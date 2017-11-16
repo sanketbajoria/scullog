@@ -6,13 +6,13 @@ var path = require('path');
 var crypto = require('crypto');
 var tail = require('../tail');
 var mime = require('mime-types');
-var Promise = require('promise');
 var tailMap = {};
 var tailCount = {};
 var platform = require('os').platform();
 const util = require('util');
 var childProcess = require('child_process');
-var zip = require('node-zip-dir');
+var admzip = require('adm-zip');
+
 var Readable = require('stream').Readable;
 
 class NodeFileManager {
@@ -196,7 +196,10 @@ class NodeFileManager {
 
   zipFolder(p) {
     var tempZipPath = __dirname + '/../tmp/' + path.basename(p) + ".zip";
-    return zip.zip(p, tempZipPath);
+    var zip = new admzip()
+    zip.addLocalFolder(p);
+    zip.writeZip(tempZipPath);
+    return Promise.resolve(tempZipPath);
   }
 }
 

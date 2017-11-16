@@ -6,7 +6,6 @@ var morgan = require('koa-morgan');
 var mount = require('koa-mount');
 var koaStatic = require('koa-static');
 var compress = require('koa-compress');
-var Promise = require('promise');
 
 var path = require('path');
 var socketio = require('socket.io');
