@@ -195,7 +195,7 @@ class NodeFileManager {
   }
 
   zipFolder(p) {
-    var tempZipPath = __dirname + '/../tmp/' + path.basename(p) + ".zip";
+    var tempZipPath = `${this.scullog.paths.temp}/${path.basename(p)}.zip`;
     var zip = new admzip()
     zip.addLocalFolder(p);
     zip.writeZip(tempZipPath);

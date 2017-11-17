@@ -1,8 +1,7 @@
 {
   "globalDependencies": {
     "koa-compress": "registry:dt/koa-compress#2.0.0+20161219223325",
-    "socket.io": "registry:dt/socket.io#1.4.4+20170313110830",
-    "validator": "registry:dt/validator#6.2.0+20170204031613"
+    "socket.io": "registry:dt/socket.io#1.4.4+20170313110830"
   },
   "dependencies": {
     "angular": "registry:dt/angular#1.6.0+20170321201455"

@@ -25,15 +25,6 @@ var NodeFileManager = require('./fileManager/NodeFileManager');
 
 var serviceOps = ['install', 'uninstall']
 
-var base = __dirname + '/config';
-var logPath = `${__dirname}/logs`;
-
-fsExtra.ensureDirSync(__dirname + '/tmp');
-fsExtra.ensureDirSync(logPath);
-
-var appLogStream = stream({ file: logPath + '/app.log', size: '1m', keep: 5 });
-var accessLogStream = stream({ file: logPath + '/access.log', size: '1m', keep: 5 });
-
 // Command line configuration
 var argv = require('yargs')
   .usage('USAGE: scullog [-s <service>] [-p <port>] [-d <directory>] [-c <config>]')
@@ -72,20 +63,32 @@ var argv = require('yargs')
 class Scullog{
   constructor(options){
     options = options || {};
+    options.base = options.base || __dirname;
+    this.paths = {};
+    this.paths.config = `${options.base}/config`;
+    this.paths.log = `${options.base}/logs`;
+    this.paths.temp = `${options.base}/tmp`;
+    
+    fsExtra.ensureDirSync(this.paths.temp);
+    fsExtra.ensureDirSync(this.paths.log);
+    
     this.__$init = new Promise((resolve, reject) => {
       var self = this;
       this.__initLogger();
       co(function * () {
-        var id, res, conf, remote;
+        var id = options.id, res, conf, remote;
 
-        if(argv.service || options.service){
-          id = 'scullog-service'
-        }else{
-          id = options.id || "scullog-" + new Date().getTime();
+        if(!id){
+          if(argv.service || options.service){
+            id = 'scullog-service'
+          }else{
+            id = "scullog-default";
+          }
         }
-        fsExtra.ensureDirSync(`${base}/${id}`);
+        
+        fsExtra.ensureDirSync(`${self.paths.config}/${id}`);
         //Read configuration
-        res = yield [utils.read(`${base}/default.json`), utils.read(`${base}/${id}/main.json`)];
+        res = yield [utils.read(`${self.paths.config}/default.json`), utils.read(`${self.paths.config}/${id}/main.json`)];
         conf = Object.assign(res[0], res[1]);
 
         //Override configuration with remote configuration file
@@ -105,7 +108,7 @@ class Scullog{
         }
 
         //Writing back the main configuration, to persist across restart
-        yield utils.write(`${base}/${id}/main.json`, conf);
+        yield utils.write(`${self.paths.config}/${id}/main.json`, conf);
 
         
         self.conf = Object.assign( conf)
@@ -160,6 +163,7 @@ class Scullog{
        server = require('http').createServer(app.callback());
      }
 
+     var accessLogStream = stream({ file: this.paths.log + '/access.log', size: '1m', keep: 5 });
 
      app.proxy = true;
      app.use(compress());
@@ -184,6 +188,7 @@ class Scullog{
    * Initialize a global logger
    */
   __initLogger() {
+    var appLogStream = stream({ file: this.paths.log + '/app.log', size: '1m', keep: 5 });
     global.C = {
       logger: require('tracer').console({
         transport: function (data) {
@@ -216,7 +221,7 @@ class Scullog{
     }
     if (options.cleanup){
       C.logger.info(`Cleanup ${this.conf.id}`);
-      fsExtra.removeSync(`${base}/${this.conf.id}`)
+      fsExtra.removeSync(`${this.paths.config}/${this.conf.id}`)
     } 
     if (options.exit) {
       C.logger.info(`Exit called ${this.conf.id}`);

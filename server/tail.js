@@ -4,7 +4,6 @@ var EventEmitter = require('events').EventEmitter;
 
 var util = require('util');
 var CBuffer = require('circular-buffer');
-var sanitizer = require('validator');
 var os = require('os');
 
 var kill = function(tail){
@@ -39,7 +38,7 @@ var Tail = function (path, options, fileManager) {
       var lines = data.toString('utf-8').split(os.EOL);
       lines = lines.filter(function(l){
         return !!l;
-      }).map(function(l){return l;/* sanitizer.escape(l) */});
+      }).map(function(l){return l;});
       lines.forEach(function (line) {
         this._buffer.enq(line);
       }.bind(this));

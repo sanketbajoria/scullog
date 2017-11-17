@@ -8,3 +8,5 @@ e2e/logs
 e2e/tmp
 tmp
 typings
+server/config/main.json
+server/config/favorite.json

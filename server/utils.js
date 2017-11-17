@@ -88,7 +88,7 @@ var extractZip = function(path, extractTo) {
 };
 
 var extractRemoteZip = function *(remotePath, localPath) {
-    var tempPath = __dirname + '/tmp/temp.zip'
+    var tempPath = './temp.zip';
     yield downloadFile(remotePath, tempPath);
     yield extractZip(tempPath, localPath);
     fsExtra.removeSync(tempPath);
