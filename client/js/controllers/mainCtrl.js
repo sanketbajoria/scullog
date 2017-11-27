@@ -33,6 +33,7 @@ function FileManagerCtr($scope, $http, $location, $timeout, $uibModal, $attrs, $
             })
             .error(function (data, status) {
                 FM.errorData = status + ': ' + data;
+                return $q.reject();
             });
     };
 
@@ -46,7 +47,7 @@ function FileManagerCtr($scope, $http, $location, $timeout, $uibModal, $attrs, $
         FM.curHashPath = hash;
         FM.curFolderPath = relPath;
         FM.curBreadCrumbPaths = hash2paths(relPath, BasePath.activePath());
-        setCurFiles(relPath);
+        return setCurFiles(relPath);
     };
 
     var httpRequest = function (method, url, params, data, config) {
@@ -109,8 +110,12 @@ function FileManagerCtr($scope, $http, $location, $timeout, $uibModal, $attrs, $
         FM.initialized = true;
         $scope.$watch(function () {
             return location.hash;
-        }, function (val) {
-            handleHashChange(val);
+        }, function (val, prev) {
+            handleHashChange(val).catch(function(){
+                if(prev != val){
+                    $location.path(prev.substring(prev.indexOf("#") + 1));
+                }
+            });
         });
     });
 
