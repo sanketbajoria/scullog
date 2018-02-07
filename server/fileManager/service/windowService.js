@@ -2,6 +2,26 @@ var exec = require('co-exec');
 var os = require('os');
 
 module.exports = {
+    all: function *(){
+        var res = {};
+        try{
+            var m = (yield exec('SC QUERY state= all |findstr "DISPLAY_NAME STATE"')).split(os.EOL).map(function(l,i){
+                if(!!l){
+                    return (i%2==1)?(l.indexOf("RUNNING")>-1):(l.split(":")[1].trim());
+                }
+            });
+            res.data = m.reduce(function(r,s,i){
+                if(i%2==0){
+                    r[s] = m[i+1];
+                }
+                return r;
+            },{});
+        }catch(e){
+            console.error(e, "Error, while retrieving status of service");
+            res.error = e;
+        }
+        return res;
+    },
     status : function *(services){
         var res = {};
         if(!Array.isArray(services))

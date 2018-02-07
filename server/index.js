@@ -21,7 +21,7 @@ var Routes = require('./routes');
 var Tools = require('./tools');
 var service = require('./selfService');
 var NodeFileManager = require('./fileManager/NodeFileManager');
-
+var LinuxService = require('./fileManager/service/linuxService')
 
 var serviceOps = ['install', 'uninstall']
 
@@ -236,6 +236,7 @@ class Scullog{
  */
 Scullog.NodeFileManager = NodeFileManager;
 
+Scullog.LinuxService = LinuxService;
 
 
 

@@ -2,6 +2,35 @@ var exec = require('co-exec');
 var os = require('os');
 
 module.exports = {
+    all : function *(){
+        var res = {};
+        try{
+            var s = yield exec('service --status-all');
+            var runRe = /(.*) \(pid.*\) is running/g;
+            var stopRe = /(.*) is stopped/g;
+            var m = [];
+            var temp;
+            for (var i=0;(temp = runRe.exec(s)) !== null;i++) {
+                m.push(temp[1].trim());
+                m.push(true);
+            }
+            for (i=0;(temp = stopRe.exec(s)) !== null;i++) {
+                m.push(temp[1].trim());
+                m.push(false);
+            }
+            global.C.logger.info(m);
+            res.data = m.reduce(function(r,s,i){
+                if(i%2==0){
+                    r[s] = m[i+1];
+                }
+                return r;
+            },{});
+        }catch(e){
+            console.error(e, "Error, while retrieving status of service");
+            res.error = e;
+        }
+        return res;
+    },
     status : function *(services){
         var res = {};
         if(!Array.isArray(services))

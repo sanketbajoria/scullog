@@ -2,6 +2,7 @@ node_modules/
 .idea
 server/config/*/main.json
 server/config/*/favorite.json
+server/config/*/service.json
 server/daemon
 logs
 e2e/logs
@@ -10,3 +11,4 @@ tmp
 typings
 server/config/main.json
 server/config/favorite.json
+server/config/service.json
