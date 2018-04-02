@@ -39,11 +39,11 @@ class NodeFileManager {
   getService() {
     var Service;
     if (platform == 'win32') {
-      Service = require('./service/windowService');
+      Service = require('./service/windowService')();
     } else if (platform == 'linux') {
-      Service = require('./service/linuxService');
+      Service = require('./service/linuxService')();
     } else if (platform == 'darwin') {
-      Service = require('./service/linuxService');
+      Service = require('./service/linuxService')();
     }
     return Service;
   }
