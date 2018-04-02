@@ -17,6 +17,9 @@
 .fileTable tr th:hover{
     background-color: rgba(0,0,0,.075);
 }
+.fileTable tbody td a:hover{
+    border-bottom: 0.8px solid black;
+}
 
 li.highlighted{
     background-color: #f4a4a4;
@@ -79,13 +82,12 @@ span.searched{
     padding: 0px;
 }
 
-
 /*Stream modal css properties*/
-.streamForm{
+.popoverForm{
     color: black;
     min-width: 154px;
 }
-.streamForm .form-group{
+.popoverForm .form-group{
     margin-bottom: 0px;
 }
 
@@ -112,9 +114,8 @@ span.searched{
 .stream .modal-body ul {
     list-style: none;
     padding-left: 0px;
-    font-size:14px;
-    line-height:1.5;
-    font-family: 'Merriweather', Georgia, sans-serif;
+    font-size: 13px;
+    line-height: 1;
 }
 
 .stream .modal-body ul li{
@@ -157,3 +158,48 @@ span.searched{
 }
 
 /*-------------------------------------------------------*/
+.drop-box {
+    position:absolute;
+    top:0;
+    bottom:0;
+    right:0;
+    left:0;
+    z-index: -10;
+}
+
+.drop-box.dragover{
+    background-color: grey;
+    opacity: 0.4;
+    z-index:1000;
+}
+
+.dragoverText {
+    position: absolute;
+    font-size: 32px;
+    top: 45%;
+    left: 45%;
+    color: white;
+    display: none;
+}
+
+.drop-box.dragover > .dragoverText{
+    display: block;
+    z-index: -9999;
+}
+
+.drop-box > .mainContent{
+    display: block;
+}
+.drop-box.dragover > .mainContent{
+    display: none;
+}
+
+.edit.myModal .modal-header .secondary *{ font-size: 12px; line-height: 1;  }
+.edit.myModal .modal-header .secondary select{
+    height: 1.5rem;
+    padding: 0.15rem;
+}
+
+.edit.myModal .modal-header .secondary li{
+    margin-right: 0px;
+}

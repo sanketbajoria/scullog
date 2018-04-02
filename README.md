@@ -63,11 +63,69 @@ Dependends on Unix style tail command
 - Windows -- Install Git for Windows. It will install unix command in the path.
 - Linux/Mac -- Support automatically
 
+# Setting up Reverse Proxy via Nginx
+## Path based reverse proxy
+Suppose, you are running scullog at localhost:9000, and wanted to run at localhost:8888/scullog, then below configuration
+```
+http{
+  map $http_upgrade $connection_upgrade {
+      default upgrade;
+      '' close;
+  }
+  server {
+		listen	8888;
+	  server_name  localhost;
+		location /scullog {
+			rewrite ^/scullog/?(.*) /$1 break;
+			proxy_pass http://127.0.0.1:9000;
+			proxy_http_version 1.1;
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection $connection_upgrade;
+		}
+	}
+}
+```
+## Port based reverse proxy
+Suppose, you are running scullog at localhost:9000, and wanted to run at localhost:8888, then below configuration
+```
+http{
+  map $http_upgrade $connection_upgrade {
+      default upgrade;
+      '' close;
+  }
+  server {
+		listen	8888;
+	  server_name  localhost;
+		location / {
+			proxy_pass http://127.0.0.1:9000;
+			proxy_http_version 1.1;
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection $connection_upgrade;
+		}
+	}
+}
+```
+
+# SSL Support
+To start scullog with ssl support, pass the ssl certificate and ssl key in configuration file in below format
+```json
+{
+  "ssl": {
+    "key": "",
+    "certificate": ""
+  }
+}
+```
+Sample configuration file, can be found <a href="https://raw.githubusercontent.com/sanketbajoria/scullog/master/default.json">here</a>
+
+
 # RoadMap
 - <s>Docker Image</s>
+- <s>Reverse Proxy support</s>
+- <s>SSL Support</s>
 - Change file permissions and attributes.
 - Better layout design for better accessibility (utilize full screen)
 - Execute custom cmd for better control.
 - View Images and videos 
 - PDF viewer
-- Drag n drop functionality for file upload
+- <s>Drag n drop functionality for file upload</s>

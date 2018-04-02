@@ -1,13 +1,14 @@
 <div class="modal-header">
-    <h4>Upload File - Just for small file now</h4>
+    <button type="button" class="close" data-dismiss="modal" ng-click="vm.no()">&times;</button>
+    <h4>Upload File</h4>
 </div>
 <div class="modal-body">
     <p>Upload to {{vm.FM.curFolderPath + vm.FM.uploadFile.name}}</p>
     <div class="form-inline">
-        <input type="file" class="form-control" ng-model="vm.FM.uploadFile">
+        <input type="file" ngf-select class="form-control" ng-model="vm.FM.uploadFile" />
     </div>
 </div>
 <div class="modal-footer">
     <button type="button" class="btn btn-default" ng-click="vm.no()">Cancel</button>
-    <button type="button" class="btn btn-primary" ng-disabled="!vm.FM.uploadFile" ng-click="vm.yes();vm.FM.upload()">OK</button>
+    <button type="button" class="btn btn-primary" ng-disabled="!vm.FM.uploadFile" ng-click="vm.yes();vm.FM.upload(vm.FM.uploadFile)">OK</button>
 </div>

@@ -4,9 +4,9 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>File Manager</title>
+  <title>Scullog</title>
 
-  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.3/css/bootstrap.min.css" integrity="sha384-MIwDKRSSImVFAZCVLtU0LMDdON6KVCrZHyVQQj6e8wIEJkW4tvwqXrbMIya1vriY" crossorigin="anonymous">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.3/css/bootstrap.min.css">
   <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
   <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/angular-loading-bar/0.9.0/loading-bar.min.css">
   <link rel="stylesheet" href="//npmcdn.com/angular-toastr/dist/angular-toastr.css">
@@ -18,15 +18,22 @@
   <script src="//cdnjs.cloudflare.com/ajax/libs/angular-loading-bar/0.9.0/loading-bar.min.js"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/2.0.1/ui-bootstrap.min.js"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/2.0.1/ui-bootstrap-tpls.min.js"></script>
-  <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.8/socket.io.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.8/socket.io.min.js"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/angularjs-scroll-glue/2.0.7/scrollglue.min.js"></script>
   <script src="//npmcdn.com/angular-toastr/dist/angular-toastr.tpls.js"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.3/FileSaver.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/danialfarid-angular-file-upload/12.2.13/ng-file-upload-all.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/ace/1.2.8/ace.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/ace/1.2.8/ext-language_tools.js"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/angular-ui-ace@0.2.3/src/ui-ace.min.js"></script>
   <script src="js/services/contextMenu.js"></script>
   <script src="js/index.js"></script>
   <script src="js/controllers/mainCtrl.js"></script>
-  <script src="js/controllers/modalCtrl.js"></script>
-  <script src="js/directives/angular-file.js"></script>
+  <script src="js/controllers/modal/modalCtrl.js"></script>
+  <script src="js/controllers/modal/editModalCtrl.js"></script>
+  <script src="js/controllers/modal/serviceModalCtrl.js"></script>
+  <script src="js/controllers/modal/streamModalCtrl.js"></script>
+  <script src="js/controllers/modal/findModalCtrl.js"></script>
   <script src="js/filters/filters.js"></script>
   <script src="js/services/basePath.js"></script>
   <script src="js/services/PermissionFactory.js"></script>
@@ -35,13 +42,17 @@
   <script src="js/services/FileDownloader.js"></script>
   <script src="js/services/serviceFactory.js"></script>
   <script src="js/services/Favorite.js"></script>
+  <script src="js/services/Editor.js"></script>
 
 
 </head>
 
 <body ng-controller="FileManagerCtr as FM" ng-cloak ng-hide="!FM.initialized">
 
-
+<div ngf-drop="FM.upload($files)" class="drop-box" ngf-drop-disabled="FM.hideBtn('upload_file')"
+  ngf-drag-over-class="'dragover'" ngf-multiple="true" ngf-include-dir="true">
+  <div class="dragoverText"><i class="fa fa-download"></i> Drag it here</div>
+  <div class="mainContent">
   <div class="container mainMenu" style="padding:0px;">
     <nav class="navbar">
       <ul class="nav navbar-nav">
@@ -83,15 +94,13 @@
     </nav>
   </div>
 
-
-
-
   <div class="container">
   <nav class="navbar navbar-dark bg-primary" style="font-size:14px;">
     <ul class="nav navbar-nav">
       <li class="nav-item" ng-hide="FM.hideBtn('create_folder')" ng-click="FM.open('create_folder')"><span class="fa fa-plus-circle"></span> New Folder</li>
       <li class="nav-item" ng-hide="FM.hideBtn('create_file')" ng-click="FM.createFile()"><span class="fa fa-plus-circle"></span> New File</li>
       <li class="nav-item" ng-hide="FM.hideBtn('upload_file')" ng-click="FM.open('upload_File')"><span class="fa fa-upload"></span> Upload</li>
+      <li class="nav-item" ng-hide="FM.hideBtn('find')" ng-click="FM.findInFiles()"><span class="fa fa-search"></span> Find</li>
       <li class="nav-item" ng-hide="FM.hideBtn('update_file')" ng-click="FM.updateFile()"><span class="fa fa-edit"></span> Edit</li>
       <li class="nav-item" ng-hide="FM.hideBtn('move')" ng-click="FM.open('move')"><span class="fa fa-random"></span> Move</li>
       <li class="nav-item" ng-hide="FM.hideBtn('copy')" ng-click="FM.open('copy')"><span class="fa fa-copy"></span> Copy</li>
@@ -116,7 +125,7 @@
     <table class="table table-hover fileTable" style='font-size:14px;'>
       <thead>
       <tr class="sortable" style="font-size:12px">
-        <th style="width:4%"><input type="checkbox" value="" ng-model="FM.selectAll"></th>
+        <th style="width:4%"><input type="checkbox" value="" ng-model="FM.selectAll" ng-change="FM.toggleSelectAll()"></th>
         <th style="width:8%" ng-click="sortType = 'folder'; sortReverse = !sortReverse">
           Type
             <span ng-show="sortType == 'folder' && sortReverse" class="fa fa-caret-down"></span>
@@ -149,6 +158,8 @@
       </tr>
       </tbody>
     </table>
+  </div>
+  </div>
   </div>
 </body>
 </html>

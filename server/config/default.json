@@ -23,7 +23,8 @@
       "service",
       "change_base",
       "favorite",
-      "edit_favorite"
+      "edit_favorite",
+      "find"
     ]
   },
   "port": 8080,

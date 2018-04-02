@@ -17,7 +17,7 @@ if(platform == 'win32'){
         }
         function installForever(){
             var r=shell.exec('whereis forever');
-            console.log(r);
+            global.C.logger.info(r);
             var rs = r.output && r.output.split(" ");
             if(rs && rs.length && rs.length > 1) {
                 return;
@@ -28,7 +28,7 @@ if(platform == 'win32'){
         }
         this.install = function(){
             installForever();
-            shell.exec(`node ${conf.cwd}/../node_modules/forever-service/bin/forever-service install -s ${conf.cwd}/index.js --start ${conf.name}`, {async: true}, function(code, output){
+            shell.exec(`node ${conf.cwd}/../node_modules/forever-service/bin/forever-service install -s ${conf.cwd}/service.js --start ${conf.name}`, {async: true}, function(code, output){
                 if(code == 0){
                     executeCB('install');
                 }
@@ -60,22 +60,22 @@ if(Service){
     svc = new Service({
         name:'Scullog',
         description: 'File Manager over a browser.',
-        script: 'server/index.js',
+        script: 'server/service.js',
         cwd: __dirname
     });
 
     // Listen for the "install" event, which indicates the
     // process is available as a service.
     svc.on('install',function(){
-        console.log("Installation complete");
+        global.C.logger.info("Installation complete");
         svc.start();
-        console.log("Auto starting the application");
+        global.C.logger.info("Auto starting the application");
     });
 
     // Listen for the "uninstall" event so we know when it's done.
     svc.on('uninstall',function(){
-        console.log('Uninstall complete.');
-        console.log('The service exists: ',svc.exists);
+        global.C.logger.info('Uninstall complete.');
+        global.C.logger.info('The service exists: ',svc.exists);
     });
 };
 

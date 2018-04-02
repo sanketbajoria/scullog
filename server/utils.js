@@ -1,13 +1,12 @@
-var path = require('path');
 var os = require('os');
 var platform = require('os').platform();
 var co = require('co');
 var fs = require('co-fs');
-var request = require('co-request');
 var origFs = require('fs');
 var admzip = require('adm-zip');
-var origRequest = require('request');
-var Promise = require('promise');
+var request = require('request');
+var fsExtra = require("fs-extra");
+var origPath = require('path');
 
 var read = function* (path){
     var data = {};
@@ -15,14 +14,20 @@ var read = function* (path){
         try {
             var res;
             if(path.indexOf('http') != -1){
-                res = (yield request(path)).body;
+                res = yield new Promise((resolve, reject) => {
+                                request(path, (err, response, body) => {
+                                    if (err)
+                                        reject(err);
+                                    resolve(body);
+                                });
+                            });
             }else{
                 res = yield fs.readFile(path, 'utf8')
             }
             data = JSON.parse(res);
         }
         catch (err) {
-            console.log("Error: while reading file: ",path,err);
+            global.C.logger.info("Error: while reading file: ",path,err);
         }
     }
     return data;
@@ -33,7 +38,7 @@ var write = function* (path, obj){
         yield fs.writeFile(path, JSON.stringify(obj), 'utf8');
     }
     catch (err) {
-        console.log("Error: while writing file: ", err);
+        global.C.logger.info("Error: while writing file: ", err);
     }
 }
 
@@ -56,13 +61,13 @@ var versionCompare = function(left, right) {
 }
 
 var downloadFile = function(url, filepath) {
-    return new Promise(function(resolve, reject) {
+    return new Promise((resolve, reject) => {
         try {
             var stream = origFs.createWriteStream(filepath);
             stream.on('finish', function() {
                 return resolve(true);
             });
-            return origRequest(url).pipe(stream);
+            return request(url).pipe(stream);
         } catch (e) {
             return reject(e);
         }
@@ -70,7 +75,7 @@ var downloadFile = function(url, filepath) {
 };
 
 var extractZip = function(path, extractTo) {
-    return new Promise(function(resolve, reject) {
+    return new Promise((resolve, reject) => {
         try {
             var zip = new admzip(path);
             var zipEntries = zip.getEntries();
@@ -82,11 +87,11 @@ var extractZip = function(path, extractTo) {
     });
 };
 
-
 var extractRemoteZip = function *(remotePath, localPath) {
-    var tempPath = './temp.zip'
+    var tempPath = './temp.zip';
     yield downloadFile(remotePath, tempPath);
     yield extractZip(tempPath, localPath);
+    fsExtra.removeSync(tempPath);
 };
 
 
@@ -94,30 +99,5 @@ module.exports = {
     read: read,
     write: write,
     versionCompare: versionCompare,
-    extractRemoteZip: extractRemoteZip,
-    filePath: function (relPath, base) {
-        if (relPath.indexOf('..') >= 0) {
-            var e = new Error('Do Not Contain .. in relPath!');
-            e.status = 400;
-            throw e;
-        }else if(!!!base || global.C.data.root.indexOf(base)==-1){
-            var e = new Error('Invalid base location');
-            e.status = 400;
-            throw e;
-        }else {
-            return path.join(base, relPath);
-        }
-    },
-    getPermissions: function(role){
-        return global.C.conf.actions[role] || global.C.conf.actions.default;
-    },
-    normalizeContent: function(content){
-        if(platform == 'win32' && content.indexOf("\r\n")==-1 && content.indexOf("\n")!=-1){
-            return content.replace(/\n/g,"\r\n");
-        }else if((platform == 'linux' || platform == 'darwin') && content.indexOf("\r\n")!=-1){
-            return content.replace(/\r\n/g,"\n");
-        }
-        return content;
-    }
-
+    extractRemoteZip: extractRemoteZip
 };

@@ -5,12 +5,27 @@
     <h4>Services</h4>
 </div>
 <div class="modal-body" style="min-height: 480px">
+    <div class="row" style="margin-bottom: 10px;">
+        <div class="col-sm-10">
+            <input type="text" class="form-control input-sm" id="name" ng-model="vm.selectedService" typeahead-on-select="vm.selectService($item, $model, $label)" uib-typeahead="i as i.name for i in vm.getServices($viewValue, 12)" typeahead-loading="loadingServices" typeahead-no-results="noResults" placeholder="Type a service name" />
+            <span class="form-control-feedback" style="margin-top: -2px" ng-show="loadingServices">
+                <i class="fa fa-spinner fa-spin fa-fw"></i>
+            </span>
+            <div ng-show="noResults">
+                <i class="glyphicon glyphicon-remove"></i> No Results Found
+            </div>
+        </div>
+        <div class="col-sm-2">
+            <button ng-click="vm.status()" type="button" class="btn btn-info" title="Status"><span class="fa fa-refresh"></span> Refresh</button>
+        </div>
+    </div>
     <table class="table">
         <thead>
         <tr>
-            <th width="50%">Name</th>
+            <th width="45%">Name</th>
             <th width="25%">Status</th>
             <th width="25%"></th>
+            <th width="5%"></th>
         </tr>
         </thead>
         <tbody style="line-height:36px;">
@@ -22,6 +37,9 @@
                 <button ng-show="!v.locked && v.status" ng-click="vm.stop(service)" type="button" class="btn btn-danger btn-sm" title="Stop Server"><span class="fa fa-stop"></span></button>
                 <button ng-show="!v.locked && v.status" ng-click="vm.restart(service)" type="button" class="btn btn-warning btn-sm" title="Restart Server"><span class="fa fa-refresh"></span></button>
                 <i ng-show="v.locked" style="font-size:1.5rem;" class="fa fa-spinner fa-spin fa-fw"></i>
+            </td>
+            <td>
+                <button ng-click="vm.remove(service)" type="button" class="btn btn-default btn-sm" title="Remove Server"><span class="fa fa-remove"></span></button>
             </td>
         </tr>
         </tbody>

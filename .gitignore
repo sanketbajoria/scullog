@@ -1,7 +1,14 @@
 node_modules/
 .idea
-.vscode
-server/config/main.json
-server/config/favorite.json
+server/config/*/main.json
+server/config/*/favorite.json
+server/config/*/service.json
 server/daemon
 logs
+e2e/logs
+e2e/tmp
+tmp
+typings
+server/config/main.json
+server/config/favorite.json
+server/config/service.json
