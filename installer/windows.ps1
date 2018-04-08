@@ -3,9 +3,9 @@ if (Get-Command scullog -errorAction SilentlyContinue)
     "Scullog exists"
 	exit
 }
-cd C:\
+Set-Location C:\
 mkdir temp
-cd temp
+Set-Location temp
 
 Set-ExecutionPolicy Unrestricted -Scope CurrentUser -Force
 
@@ -25,10 +25,10 @@ npm-windows-upgrade --npm-version 3.10.7
 npm install -g scullog
 scullog -s install -c http://galaxy.relayhub.pitneycloud.com/configuration/windows.json
 Start-Sleep 10
-del settings.ini
-del Git-2.10.0-64-bit.exe
-del node-v4.5.0-x64.msi
+Remove-Item settings.ini
+Remove-Item Git-2.10.0-64-bit.exe
+Remove-Item node-v4.5.0-x64.msi
 $WebClient.DownloadString("http://localhost:8080/updateFM?forceUpgrade=true")
 Start-Sleep 30
-cd ..
-rmdir /q temp
+Set-Location ..
+Remove-Item -Recurse -Force temp

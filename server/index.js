@@ -19,7 +19,7 @@ var utils = require('./utils');
 var fsExtra = require('fs-extra');
 var Routes = require('./routes');
 var Tools = require('./tools');
-var service = require('./selfService');
+var service = require('./service');
 var NodeFileManager = require('./fileManager/NodeFileManager');
 var LinuxService = require('./fileManager/service/linuxService')
 
