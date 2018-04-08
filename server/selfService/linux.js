@@ -407,7 +407,61 @@ function stop(rcode) {
     process.exit(rcode || 0);
 }
 
-exports.add = add;
-exports.remove = remove;
-exports.run = run;
-exports.stop = stop;
+module.exports = function (conf) {
+    var eventCB = {};
+    function executeCB(event) {
+        if (eventCB[event]) {
+            eventCB[event].forEach(function (cb) {
+                cb();
+            })
+        }
+    }
+
+    this.install = function () {
+        add(conf.name, { displayName: conf.name, programPath: `${conf.cwd}/../service.js` }, function (err) {
+            if (err) {
+                global.C.logger.info("Error occurred, while installing as service - " + err);
+            } else {
+                executeCB('install');
+            }
+        });
+    }
+
+    this.uninstall = function () {
+        this.stop();
+        setTimeout(function () {
+            remove(conf.name, function (err) {
+                if (err) {
+                    global.C.logger.info("Error occurred, while uninstalling service - " + err);
+                } else {
+                    executeCB('uninstall');
+                }
+            });
+        }, 10000);
+    }
+
+    this.start = function () {
+        child_process.exec(`service ${conf.name} start`, function (err) {
+            if (err) {
+                global.C.logger.info("Error occurred, while starting service - " + err);
+            } else {
+                executeCB('start');
+            }
+        });
+    }
+
+    this.stop = function () {
+        child_process.exec(`service ${conf.name} stop`, function (err) {
+            if (err) {
+                global.C.logger.info("Error occurred, while stopping service - " + err);
+            } else {
+                executeCB('stop');
+            }
+        })
+    }
+
+    this.on = function (event, cb) {
+        eventCB[event] = eventCB[event] || [];
+        eventCB[event].push(cb);
+    }
+}

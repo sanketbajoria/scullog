@@ -21,9 +21,9 @@ var Routes = require('./routes');
 var Tools = require('./tools');
 var service = require('./selfService');
 var NodeFileManager = require('./fileManager/NodeFileManager');
-var LinuxService = require('./fileManager/service/linuxService')
+var LinuxService = require('./fileManager/service/linuxService');
 
-var serviceOps = ['install', 'uninstall']
+var serviceOps = ['install', 'uninstall', 'start', 'stop', 'restart'];
 
 // Command line configuration
 var argv = require('yargs')
@@ -31,7 +31,7 @@ var argv = require('yargs')
   .options({
     's': {
       alias: 'service',
-      describe: 'install/uninstall as service',
+      describe: 'install/uninstall/start/stop/restart as service',
       choices: serviceOps
     },
     'p': {

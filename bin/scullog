@@ -1,2 +1,3 @@
 #!/usr/bin/env node
-require(__dirname + '/../server/index.js')();
+var Scullog = require(__dirname + '/../server/index.js');
+new Scullog();
