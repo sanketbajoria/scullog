@@ -1,52 +1,12 @@
 'use strict'
-var linuxService = require ("./linux");
 var platform = require('os').platform();
 var Service;
 if(platform == 'win32'){
-    Service = require('node-windows').Service;
+    Service = require("./windows")
 }else if(platform == 'linux'){
-    Service = function(conf){
-        var eventCB = {};
-        function executeCB(event){
-            if(eventCB[event]){
-                eventCB[event].forEach(function(cb){
-                    cb();
-                })
-            }
-        }
-        
-        this.install = function(){
-            linuxService.add(conf.name, {displayName: conf.name, programPath: `${conf.cwd}/../service.js`}, function(err){
-                if(err){
-                    global.C.logger.info("Error occurred, while installing as service - " + err);             
-                }else{
-                    executeCB('install');
-                }
-            });
-        }
-        this.uninstall = function(){
-            this.stop();
-            linuxService.remove(conf.name, function(err){
-                if(err){
-                    global.C.logger.info("Error occurred, while uninstalling service - " + err);             
-                }else{
-                    executeCB('uninstall');
-                }
-            });
-        }
-        this.start = function(){
-          
-        }
-        this.stop = function(){
-           
-        }
-        this.on = function(event, cb){
-            eventCB[event] = eventCB[event] || [];
-            eventCB[event].push(cb);
-        }
-    }//require('node-linux').Service;
+    Service = require ("./linux"); //require('node-linux').Service;
 }else if(platform == 'darwin'){
-    Service = require('node-mac').Service;
+    Service = require ("./darwin");
 }
 
 var svc;
@@ -58,6 +18,12 @@ if(Service){
         script: 'server/service.js',
         cwd: __dirname
     });
+    svc.restart = function(){
+        svc.stop();
+        setTimeout(function(){
+            svc.start();
+        },15000);
+    }
 
     // Listen for the "install" event, which indicates the
     // process is available as a service.
