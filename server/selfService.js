@@ -1,7 +1,6 @@
 'use strict'
-
+var linuxService = require ("./linuxSelfService");
 var platform = require('os').platform();
-var shell = require('shelljs');
 var Service;
 if(platform == 'win32'){
     Service = require('node-windows').Service;
@@ -15,35 +14,31 @@ if(platform == 'win32'){
                 })
             }
         }
-        function installForever(){
-            var r=shell.exec('whereis forever');
-            global.C.logger.info(r);
-            var rs = r.output && r.output.split(" ");
-            if(rs && rs.length && rs.length > 1) {
-                return;
-            }else{
-                shell.exec('npm install -g forever');
-                return;
-            }
-        }
+        
         this.install = function(){
-            installForever();
-            shell.exec(`node ${conf.cwd}/../node_modules/forever-service/bin/forever-service install -s ${conf.cwd}/service.js --start ${conf.name}`, {async: true}, function(code, output){
-                if(code == 0){
+            linuxService.add(conf.name, {displayName: conf.name, programPath: `${conf.cwd}/service.js`}, function(err){
+                if(err){
+                    global.C.logger.info("Error occurred, while installing as service - " + err);             
+                }else{
                     executeCB('install');
                 }
             });
         }
         this.uninstall = function(){
-            installForever();
-            shell.exec(`node ${conf.cwd}/../node_modules/forever-service/bin/forever-service delete ${conf.name}`, {async: true}, function(code, output){
-                if(code == 0){
+            this.stop();
+            linuxService.remove(conf.name, function(err){
+                if(err){
+                    global.C.logger.info("Error occurred, while uninstalling service - " + err);             
+                }else{
                     executeCB('uninstall');
                 }
             });
         }
         this.start = function(){
-
+          
+        }
+        this.stop = function(){
+           
         }
         this.on = function(event, cb){
             eventCB[event] = eventCB[event] || [];
@@ -77,6 +72,6 @@ if(Service){
         global.C.logger.info('Uninstall complete.');
         global.C.logger.info('The service exists: ',svc.exists);
     });
-};
+}; 
 
 module.exports = svc;
