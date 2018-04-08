@@ -4,7 +4,7 @@ var co = require('co');
 var fs = require('co-fs');
 var origFs = require('fs');
 var admzip = require('adm-zip');
-var request = require('request');
+var got = require('got');
 var fsExtra = require("fs-extra");
 var origPath = require('path');
 
@@ -14,12 +14,8 @@ var read = function* (path){
         try {
             var res;
             if(path.indexOf('http') != -1){
-                res = yield new Promise((resolve, reject) => {
-                                request(path, (err, response, body) => {
-                                    if (err)
-                                        reject(err);
-                                    resolve(body);
-                                });
+                res = yield got(path).then((response) => {
+                                return response.body;
                             });
             }else{
                 res = yield fs.readFile(path, 'utf8')
@@ -67,7 +63,7 @@ var downloadFile = function(url, filepath) {
             stream.on('finish', function() {
                 return resolve(true);
             });
-            return request(url).pipe(stream);
+            return got.stream(url).pipe(stream);
         } catch (e) {
             return reject(e);
         }
@@ -93,7 +89,6 @@ var extractRemoteZip = function *(remotePath, localPath) {
     yield extractZip(tempPath, localPath);
     fsExtra.removeSync(tempPath);
 };
-
 
 module.exports = {
     read: read,

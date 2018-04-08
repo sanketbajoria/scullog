@@ -16,7 +16,7 @@ if(platform == 'win32'){
         }
         
         this.install = function(){
-            linuxService.add(conf.name, {displayName: conf.name, programPath: `${conf.cwd}/service/index.js`}, function(err){
+            linuxService.add(conf.name, {displayName: conf.name, programPath: `${conf.cwd}/../service.js`}, function(err){
                 if(err){
                     global.C.logger.info("Error occurred, while installing as service - " + err);             
                 }else{
@@ -55,7 +55,7 @@ if(Service){
     svc = new Service({
         name:'Scullog',
         description: 'File Manager over a browser.',
-        script: 'server/service/index.js',
+        script: 'server/service.js',
         cwd: __dirname
     });
 

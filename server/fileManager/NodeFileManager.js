@@ -69,8 +69,8 @@ class NodeFileManager {
       //Try to read file, if unable to do it, then move on.
       try {
         if (platform == 'win32') {
-          var attr = (require('winattr').getSync(fPath));
-          if (attr.system)
+          var s = yield fs.stat(fPath);
+          if (!s.isFile() && !s.isDirectory())
             continue;
         }
         var stat = yield this.getStats(fPath);

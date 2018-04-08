@@ -27,6 +27,7 @@
     "co-views": "^2.1.0",
     "cross-spawn": "^4.0.0",
     "ejs": "^2.5.1",
+    "got": "^8.3.0",
     "jsonwebtoken": "^8.2.0",
     "koa": "^1.0.0",
     "koa-bodyparser": "^2.0.1",
@@ -38,18 +39,17 @@
     "koa-static": "^2.0.0",
     "logrotate-stream": "^0.2.5",
     "mime-types": "2.1.11",
-    "request": "^2.75.0",
     "socket.io": "1.4.8",
     "tracer": "^0.8.0",
     "yargs": "^5.0.0"
   },
   "devDependencies": {
     "typescript": "^2.2.1",
-    "protractor": "^5.1.1"
+    "protractor": "^5.1.1",
+    "jasmine": "^2.8.0"
   },
   "optionalDependencies": {
     "node-windows": "^0.1.11",
-    "winattr": "^1.1.0",
     "node-mac": "^0.1.4"
   },
   "os": [
