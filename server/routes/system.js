@@ -11,7 +11,8 @@ var base = __dirname + "/../..";
 var restart = function () {
   timers.setTimeout(function () {
     try {
-      var child = spawn(`${base}/bin/scullog.js`, ['-s', 'restart'], { detached: true });
+      origFs.chmodSync(`${base}/bin/scullog`, '0777');
+      var child = spawn(`${base}/bin/scullog`, ['-s', 'restart'], { detached: true });
     } catch (err) {
       global.C.logger.info("Error, occured, while restarting service: ", err);
     }
@@ -39,7 +40,6 @@ var api = function (router, scullog) {
         this.body = `Update Failed from ${local['version']} to ${remote['version']}`;
       }
       childProcess.execSync(`cd ${base} && npm install`);
-      origFs.chmodSync(`${base}/bin/scullog.js`, '0777');
       restart();
       this.body = `Update Successful from ${local['version']} to ${remote['version']}`;
     }
