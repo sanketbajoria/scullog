@@ -114,8 +114,10 @@ span.searched{
 .stream .modal-body ul {
     list-style: none;
     padding-left: 0px;
-    font-size: 13px;
-    line-height: 1;
+    font-family: Roboto Mono,Courier New,monospace;
+    font-size: 11px;
+    line-height: 16px;
+    color: #333;
 }
 
 .stream .modal-body ul li{
