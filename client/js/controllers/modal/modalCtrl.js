@@ -26,5 +26,5 @@
         vm.init();
     }
 
-    FMApp.controller('ModalCtrl', ModalCtrl);
+    FMApp.controller('ModalCtrl', ["$log", "$uibModalInstance", "FM", ModalCtrl]);
 })();

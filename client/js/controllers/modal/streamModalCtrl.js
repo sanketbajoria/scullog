@@ -1,4 +1,6 @@
 'use strict';
+import $ from 'jquery';
+
 (function () {
     var FMApp = angular.module('FMApp');
 
@@ -47,5 +49,5 @@
         vm.init();
     }
 
-    FMApp.controller('StreamModalCtrl', StreamModalCtrl);
+    FMApp.controller('StreamModalCtrl', ["$scope", "$rootScope", "$log", "$uibModalInstance", "FileDownloader", "FM", "data", StreamModalCtrl]);
 })();

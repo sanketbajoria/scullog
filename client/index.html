@@ -6,47 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Scullog</title>
 
-  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.3/css/bootstrap.min.css">
-  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
-  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/angular-loading-bar/0.9.0/loading-bar.min.css">
-  <link rel="stylesheet" href="//npmcdn.com/angular-toastr/dist/angular-toastr.css">
-  <link rel="stylesheet" href="css/app.css">
-
-  <script src="//rawgit.com/eligrey/Blob.js/master/Blob.js"></script>
-  <script src="//code.jquery.com/jquery-2.2.4.min.js"></script>
-  <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.8/angular.min.js"></script>
-  <script src="//cdnjs.cloudflare.com/ajax/libs/angular-loading-bar/0.9.0/loading-bar.min.js"></script>
-  <script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/2.0.1/ui-bootstrap.min.js"></script>
-  <script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/2.0.1/ui-bootstrap-tpls.min.js"></script>
-  <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.8/socket.io.min.js"></script>
-  <script src="//cdnjs.cloudflare.com/ajax/libs/angularjs-scroll-glue/2.0.7/scrollglue.min.js"></script>
-  <script src="//npmcdn.com/angular-toastr/dist/angular-toastr.tpls.js"></script>
-  <script src="//cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.3/FileSaver.min.js"></script>
-  <script src="//cdnjs.cloudflare.com/ajax/libs/danialfarid-angular-file-upload/12.2.13/ng-file-upload-all.min.js"></script>
-  <script src="//cdnjs.cloudflare.com/ajax/libs/ace/1.2.8/ace.js"></script>
-  <script src="//cdnjs.cloudflare.com/ajax/libs/ace/1.2.8/ext-language_tools.js"></script>
-  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/angular-ui-ace@0.2.3/src/ui-ace.min.js"></script>
-  <script src="js/services/contextMenu.js"></script>
-  <script src="js/index.js"></script>
-  <script src="js/controllers/mainCtrl.js"></script>
-  <script src="js/controllers/modal/modalCtrl.js"></script>
-  <script src="js/controllers/modal/editModalCtrl.js"></script>
-  <script src="js/controllers/modal/serviceModalCtrl.js"></script>
-  <script src="js/controllers/modal/streamModalCtrl.js"></script>
-  <script src="js/controllers/modal/findModalCtrl.js"></script>
-  <script src="js/filters/filters.js"></script>
-  <script src="js/services/basePath.js"></script>
-  <script src="js/services/PermissionFactory.js"></script>
-  <script src="js/services/authInterceptor.js"></script>
-  <script src="js/services/iconFinder.js"></script>
-  <script src="js/services/FileDownloader.js"></script>
-  <script src="js/services/serviceFactory.js"></script>
-  <script src="js/services/Favorite.js"></script>
-  <script src="js/services/Editor.js"></script>
-
+  <script src="./index.js"></script>
 
 </head>
-
 <body ng-controller="FileManagerCtr as FM" ng-cloak ng-hide="!FM.initialized">
 
 <div ngf-drop="FM.upload($files)" class="drop-box" ngf-drop-disabled="FM.hideBtn('upload_file')"
@@ -117,7 +79,7 @@
   <div class="container">
     <div style="position:relative;">
     <ol class="breadcrumb" style="background-color: white;padding-left: 0.65rem;padding-right: 1rem; font-size:15px;">
-      <li ng-repeat="p in FM.curBreadCrumbPaths" class="breadcrumb-item"><a href={{p.path}}><span class="fa fa-home" ng-if="p.name=='Home'"></span> {{p.name}}</a></li>
+      <li ng-repeat="p in FM.curBreadCrumbPaths" class="breadcrumb-item"><a ng-href="{{p.path}}"><span class="fa fa-home" ng-if="p.name=='Home'"></span> {{p.name}}</a></li>
     </ol>
       <span ng-hide="FM.hideBtn('edit_favorite')" ng-class="FM.favorite()?'fa-heart':'fa-heart-o'" ng-click="FM.favorite(true)" style="position:absolute;top:16px;right:10px;width:32px;height:32px;" class="fa"></span>
     </div>

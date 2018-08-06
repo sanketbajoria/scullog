@@ -77,5 +77,5 @@
         return ret;
     }
 
-    FMApp.controller('ServiceModalCtrl', ServiceModalCtrl);
+    FMApp.controller('ServiceModalCtrl', ["$log", "$uibModalInstance", "$http", "FM", "data", "serviceFactory", "toastr", "$filter", ServiceModalCtrl]);
 })();

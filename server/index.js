@@ -178,6 +178,7 @@ class Scullog {
     app.use(tools.checkAccessCookie);
     app.use(tools.realIp);
     app.use(mount('/', new Routes(this)));
+    app.use(koaStatic(path.join(__dirname, '../dist/')));
     app.use(koaStatic(path.join(__dirname, '../client/')));
     app.use(koaStatic(path.join(__dirname, '../node_modules/')));
 

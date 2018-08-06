@@ -2,7 +2,7 @@ var koaRouter = require('koa-router');
 var path = require('path');
 var views = require('co-views');
 
-var render = views(path.join(__dirname, '../../client'), {map: {html: 'ejs'}});
+var render = views(path.join(__dirname, '../../dist'), {map: {html: 'ejs'}});
 
 module.exports = function(scullog){
   var router = new koaRouter();

@@ -33,5 +33,5 @@
         };
     }
 
-    angular.module('FMApp').factory('PermissionFactory', PermissionFactory);
+    angular.module('FMApp').factory('PermissionFactory', ["$q", "$http", "$log", "toastr", PermissionFactory]);
 })();

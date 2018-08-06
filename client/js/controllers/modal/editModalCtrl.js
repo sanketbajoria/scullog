@@ -1,4 +1,6 @@
 'use strict';
+import $ from 'jquery';
+
 (function () {
     var FMApp = angular.module('FMApp');
 
@@ -69,5 +71,5 @@
         vm.init();
     }
 
-    FMApp.controller('EditModalCtrl', EditModalCtrl);
+    FMApp.controller('EditModalCtrl', ["$scope", "$rootScope", "$log", "$uibModalInstance", "FileDownloader", "FM", "data", "$http", "Editor", EditModalCtrl]);
 })();

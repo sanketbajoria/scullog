@@ -39,5 +39,5 @@
             $favorite: $favorite
         };
     }
-    angular.module('FMApp').factory('Favorite', Favorite);
+    angular.module('FMApp').factory('Favorite', ["BasePath", "$http", "$log", "toastr", Favorite]);
 })();

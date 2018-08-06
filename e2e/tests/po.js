@@ -4,7 +4,7 @@ module.exports = {
     },
     escalatePrivilege: function () {
         this.getPrivilegeButton().click();
-        $$('.privilegeForm button').get(0).click();
+        $('.privilegeForm button').get(0).click();
     },
     getPrivilegeButton: function () {
         return element(by.xpath('//li/a[contains(text(),"Privilege")]/..'));

@@ -1,4 +1,5 @@
 var FMApp = angular.module('FMApp');
+import io from 'socket.io-client';
 
 function FileManagerCtr($scope, $http, $location, $timeout, $uibModal, $attrs, $log, $q, Favorite, IconFinder, FileDownloader, PermissionFactory, toastr, serviceFactory, BasePath, $window, Upload, cfpLoadingBar, Editor) {
     var FM = this;
@@ -39,7 +40,8 @@ function FileManagerCtr($scope, $http, $location, $timeout, $uibModal, $attrs, $
 
     var handleHashChange = function (hash) {
         if (!hash) {
-            return $location.path('/');
+            $location.path('/');
+            return $q.when();
         }
         hash = decodeURIComponent(hash);
         $log.debug('Hash change: ' + hash);
@@ -497,4 +499,4 @@ function hash2paths(relPath, base) {
 function _case(s) {
     return s.toLowerCase().replace(" ", "_");
 }
-FMApp.controller('FileManagerCtr', FileManagerCtr);
+FMApp.controller('FileManagerCtr', ["$scope", "$http", "$location", "$timeout", "$uibModal", "$attrs", "$log", "$q", "Favorite", "IconFinder", "FileDownloader", "PermissionFactory", "toastr", "serviceFactory", "BasePath", "$window", "Upload", "cfpLoadingBar", "Editor", FileManagerCtr]);

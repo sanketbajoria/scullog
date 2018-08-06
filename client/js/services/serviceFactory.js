@@ -21,5 +21,5 @@
                         }, {});
         return service;
     }
-    angular.module('FMApp').factory('serviceFactory', serviceFactory);
+    angular.module('FMApp').factory('serviceFactory', ["$http", "$log", "toastr", "$q", serviceFactory]);
 })();

@@ -24,5 +24,5 @@
             $path: $path
         };
     }
-    angular.module('FMApp').factory('BasePath', BasePath);
+    angular.module('FMApp').factory('BasePath', ["$q", "$http", "$log", "toastr", BasePath]);
 })();
