@@ -1,0 +1,279 @@
+.toast-title {
+    size: 14px;
+}
+
+.toast-message {
+    font-size: 14px;
+}
+
+.sortable {
+    cursor: pointer;
+}
+
+.fileTable tr th span {
+    font-size: 12px;
+    margin-left: 8px;
+}
+.fileTable tr th:hover{
+    background-color: rgba(0,0,0,.075);
+}
+.fileTable tbody td a:hover{
+    border-bottom: 0.8px solid black;
+}
+
+li.highlighted{
+    background-color: #f4a4a4;
+}
+span.searched{
+    background-color: yellow;
+}
+.folder{
+    color: #094AB2;
+}
+.text{
+    color: gray;
+}
+.pdf{
+    color: #D90200;
+}
+.code{
+    color: black;
+}
+.archive{
+    color: #094AB2;
+}
+.word{
+    color: #2B5797;
+}
+.ppt{
+    color: #D04727;
+}
+.excel{
+    color: #1F7246;
+}
+.file{
+    color: silver;
+}
+.audio{
+    color: #679BE6;
+}
+.image{
+    color: #FC6351;
+}
+.movie{
+    color: #C1253D;
+}
+.navbar li{
+    margin-right: 16px;
+    cursor: pointer;
+    padding-top: 4px;
+    padding-bottom: 4px;
+}
+
+.breadcrumb-item+.breadcrumb-item::before{
+    content: ">";
+}
+
+.mainMenu .navbar-nav .nav-link{
+    padding: 0px;
+}
+.mainMenu .navbar > ul > li{
+    margin-right: 0px;
+    padding: 0px;
+}
+
+/*Stream modal css properties*/
+.popoverForm{
+    color: black;
+    min-width: 154px;
+}
+.popoverForm .form-group{
+    margin-bottom: 0px;
+}
+
+
+.myModal .modal-dialog.expand {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    max-width: 100%;
+}
+
+.myModal .modal-dialog.expand .modal-content{
+    min-height: 100%;
+    border-radius: 0;
+}
+
+.myModal .modal-header .nav-link {
+    margin-top: 6px;
+    font-size: 1.1rem;
+    padding: 0px;
+}
+
+.stream .modal-body ul {
+    list-style: none;
+    padding-left: 0px;
+    font-size: 13px;
+    line-height: 1;
+}
+
+.stream .modal-body ul li{
+    padding:0px 16px;
+}
+
+.scroll-glue{
+    overflow-y: auto;
+    border: none;
+    padding: 8px 0px;
+}
+
+#searchStream{
+    color:black;
+}
+
+#searchStream .row{
+    margin-bottom: 8px;
+}
+
+#searchStream .col-form-label {
+    padding-top: .25rem;
+    padding-bottom: .25rem;
+}
+
+.form-group.input-icon{
+    position: relative;
+}
+
+.form-group.input-icon span{
+    position: absolute;
+    top: 6px;
+    right: 18px;
+    font-size: 14px;
+    color: lightgray;
+}
+
+.form-group.input-icon input{
+    padding-right: 22px;
+}
+
+/*-------------------------------------------------------*/
+.drop-box {
+    position:absolute;
+    top:0;
+    bottom:0;
+    right:0;
+    left:0;
+    z-index: -10;
+}
+
+.drop-box.dragover{
+    background-color: grey;
+    opacity: 0.4;
+    z-index:1000;
+}
+
+.dragoverText {
+    position: absolute;
+    font-size: 32px;
+    top: 45%;
+    left: 45%;
+    color: white;
+    display: none;
+}
+
+.drop-box.dragover > .dragoverText{
+    display: block;
+    z-index: -9999;
+}
+
+.drop-box > .mainContent{
+    display: block;
+}
+.drop-box.dragover > .mainContent{
+    display: none;
+}
+
+.edit.myModal .modal-header .secondary *{ font-size: 12px; line-height: 1;  }
+.edit.myModal .modal-header .secondary select{
+    height: 1.5rem;
+    padding: 0.15rem;
+}
+
+.edit.myModal .modal-header .secondary li{
+    margin-right: 0px;
+}
+
+/****/
+
+body > .drop-box {
+	background: #081622;
+	background: #12334b;
+	background: -moz-linear-gradient(top, #12334b 0%, #0b1a26 50%, #102c40 100%);
+	background: -webkit-linear-gradient(top, #12334b 0%, #0b1a26 50%, #102c40 100%);
+	background: linear-gradient(to bottom, #12334b 0%, #0b1a26 50%, #102c40 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#12334b', endColorstr='#102c40',GradientType=0 );
+}
+
+.nav-link {
+	color: white;
+}
+
+.navbar-dark {
+	background-image: linear-gradient(to bottom, #0096ff, #04527d)!important;
+	box-shadow: inset 0 0 0 0.13236rem rgba(255, 255, 255, 0.15), 0 0.13236rem 0.66181rem rgba(0, 0, 0, 0.4)!important;
+	background: rgba(0, 129, 199, 0.8)!important;
+}
+
+.breadcrumb {
+	background: rgba(255, 255, 255, 0.1);
+	padding-left: 0.65rem;
+	padding-right: 1rem;
+	font-size: 15px;
+	margin-top: 2rem;
+}
+
+.breadcrumb-item * {
+	color: white;
+}
+
+a:hover, .nav-link:hover, a:focus {
+	color: white;
+	text-decoration: underline;
+}
+
+.table td, .table th, .table thead th {
+	color: white;
+}
+
+.table-hover tbody tr:hover,
+.table-hover .table-active:hover,
+.table-active, .table-active > td, .table-active > th {
+	background-color: rgba(255,255,255,.075);
+}
+
+.table thead th {
+	border-bottom: 2px solid rgba(255,255,255,0.3);
+}
+
+.table td, .table th {
+	border-top: 1px solid rgba(255,255,255,0.3);
+}
+
+.fa {
+	color: white;
+}
+
+.modal-header {
+	background: #12334b;
+}
+
+body {
+	background-color: black;
+	font-family: "Lucida Console", Monaco, monospace;
+}
+
+.drop-box {
+	position: static;
+	min-height: 100vh;
+}

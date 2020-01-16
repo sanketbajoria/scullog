@@ -7,6 +7,7 @@
         vm.FM = FM;
         vm.items = [];
         vm.data = data;
+		vm.expand = true;
         var contentHeight = function(expand){
             return expand?$(window).height() -  $('.stream .modal-header').height() - 24:$(window).height() * 70 / 100;
         }
