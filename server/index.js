@@ -177,7 +177,7 @@ class Scullog{
      app.use(koaStatic(path.join(__dirname, '../node_modules/')));
 
      global.C.logger.info('listening on *.' + this.conf.port + " on " + (this.conf.ssl ? "https" : "http"));
-     server.listen(this.conf.port, "127.0.0.1", () => {
+     server.listen(this.conf.port, "0.0.0.0", () => {
       resolve(this.conf.port);
      });
 
@@ -194,7 +194,13 @@ class Scullog{
         transport: function (data) {
           console.log(data.output);
           appLogStream.write(data.output + "\n");
-        }
+        },
+        format : [
+	    "<{{title}}> {{file}}:{{line}} ({{method}}) {{message}}",
+	    {
+		error : "<{{title}}> {{file}}:{{line}} ({{method}}) {{message}}\nCall Stack:\n{{stack}}"
+	    }
+	]
       })
     }
   }
