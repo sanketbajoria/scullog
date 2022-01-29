@@ -1,0 +1,50 @@
+{
+  "secret": "",
+  "actions": {
+    "default": [
+      "download",
+      "stream",
+      "refresh",
+      "privilege",
+	  "change_base",
+      "favorite",
+      "edit_favorite"
+    ],
+    "elevated": [
+      "delete",
+      "move",
+      "copy",
+      "create_file",
+      "update_file",
+      "rename",
+      "upload_file",
+      "create_folder",
+      "download",
+      "stream",
+      "refresh",
+      "service",
+      "change_base",
+      "favorite",
+      "edit_favorite"
+    ]
+  },
+  "port": 8080,
+  "morganFormat": "combined",
+  "services": [
+    "Apache CouchDB",
+	"Relay Process Engine",
+	"Relay Process Engine v2.0",
+	"Relay Process Engine v1.0",
+	"Relay S3 Monitor Service",
+	"Relay S3 Monitor Service v1.0",
+	"Relay S3 Monitor Service v2.0",
+	"RelayScanner"
+  ],
+  "directory": [
+	"C:\\",
+	"\\\\staging-fs\\OFMA",
+	"\\\\staging-fs\\PIOM-Config",
+	"\\\\prod-FS-01\\OFMA",
+	"\\\\prod-fs-01\\PIOM-Config"
+  ]
+}

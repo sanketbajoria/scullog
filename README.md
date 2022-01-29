@@ -23,7 +23,7 @@ Scullog, having capability of sharing the local drive to the browser. Stream the
 # Installation
 Install the scullog npm package
 ```sh
-  npm install -g scullog
+  yarn install -g scullog
 ```
 Run the scullog in either standalone
 ```sh

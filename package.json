@@ -4,14 +4,15 @@
   "description": "Scullog based on Node.js and Angular.js",
   "main": "./server/index.js",
   "scripts": {
+    "prebuild": "rm -rf dist",
     "start": "node --harmony ./server/index.js",
-    "install": "parcel build client/index.html",
+    "build": "parcel build client/index.html",
     "posttest": "node --harmony ./e2e/conf/posttest.js",
-    "preupdate-webdriver": "npm install",
+    "preupdate-webdriver": "yarn install && yarn build",
     "update-webdriver": "webdriver-manager update",
-    "pretest": "npm run update-webdriver && node --harmony ./e2e/conf/pretest.js",
+    "pretest": "yarn run update-webdriver && node --harmony ./e2e/conf/pretest.js",
     "test": "protractor ./e2e/protractor.conf.js",
-    "preE2ETest": "npm run-script posttest && npm run-script pretest"
+    "preE2ETest": "yarn run-script posttest && yarn run-script pretest"
   },
   "bin": {
     "scullog": "../scullog/bin/scullog"
@@ -59,6 +60,8 @@
     "yargs": "^5.0.0"
   },
   "devDependencies": {
+    "parcel-bundler": "^1.9.7",
+    "webdriver-manager": "^12.1.0",
     "cssnano": "^4.0.5",
     "jasmine": "^2.8.0",
     "protractor": "^5.1.1",

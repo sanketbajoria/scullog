@@ -13,3 +13,4 @@ server/config/main.json
 server/config/favorite.json
 server/config/service.json
 dist
+.cache

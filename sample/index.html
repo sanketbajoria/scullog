@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+    <style>
+        body, html {
+            margin: 0px;
+            padding: 0px;
+            overflow-y: hidden;
+        }
+
+        .content {
+            border: none;
+            width: 100%;
+        }
+
+        .loading {
+            position: absolute;
+            background-color: gray;
+            opacity: 0.5;
+            z-index: 9999;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+        }
+
+        .loading div {
+            position: absolute;
+            top: 50%;
+            text-align: center;
+            left: 50%;
+            margin-top: -60px;
+            margin-left: -30px;
+        }
+
+        .homeContent {
+            top: 50%;
+            position: absolute;
+            margin-left: 20%;
+            margin-right: 20%;
+            margin-top: -60px;
+            width: 60%;
+            text-align: center;
+        }
+		
+		.footer {
+			    position: absolute;
+				bottom: 0px;
+				text-align: center;
+				width: 100%;
+		}
+
+        .navbar {
+            border-radius: 0px;
+            padding-top: 2px;
+            padding-bottom: 2px;
+        }
+    </style>
+    <script type="application/javascript">
+        var mmap = {
+            "dev1": "http://localhost:7061",
+            "dev2": "http://localhost:7062",
+			"dev-api": "http://localhost:7063",
+            "pi-01": "http://localhost:7071",
+            "pi-02": "http://localhost:7072",
+            "pi-staging": "http://localhost:7073",
+            "sql-01": "http://localhost:7081/_utils/fauxton/",
+            "sql-02": "http://localhost:7083/_utils/fauxton/",
+            "sql-staging": "http://localhost:7085/_utils/fauxton/",
+            "old-sql-01": "http://localhost:7081/_utils/",
+            "old-sql-02": "http://localhost:7083/_utils/",
+            "old-sql-staging": "http://localhost:7085/_utils/",
+            "ofma": {url: "http://ofma.relayhub.pitneycloud.com/", embed: false},
+            "ofma-staging": {url: "http://ofma.staging.relayhub.pitneycloud.com/", embed: false},
+            "ofma-admin": {url: "http://localhost:9090/", embed: false},
+            "ofma-admin-staging": {url: "http://localhost:9091/", embed: false}
+        }
+        $(document).ready(function () {
+            var frameHeight = $(window).height() - $(".navbar").height() - 6;
+            $(".content").attr("height", frameHeight + 'px').css("height", frameHeight + 'px');
+            var iframe = $("iframe.content");
+            var homeContent = $("div.content")
+            $(".navbar").on('click', 'a', function () {
+                var url = ($(this).data("url"));
+                if (url) {
+                    $(".navbar li").removeClass('active');
+                    $(this).parents("li").addClass('active');
+                    if (url == "home") {
+						$("#currentServer").text("");
+                        homeContent.show();
+                        iframe.hide();
+                    } else {
+                        if(typeof mmap[url] === "string"){
+                            iframe.attr('src', mmap[url]).show();
+							$("#currentServer").text($(this).text());
+                            homeContent.hide();
+                        }else{
+                            window.open(mmap[url].url);
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</head>
+
+<body>
+<nav class="navbar navbar-toggleable-md navbar-inverse bg-inverse">
+	<a class="navbar-brand" style="margin-left:40%;" href="#" data-url="home">Galaxy</a>
+    <ul class="navbar-nav">
+        <li class="nav-item active">
+            <a class="nav-link" href="#" data-url="home">Home</a>
+        </li>
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#">P/I
+                <span class="caret"></span></a>
+
+            <div class="dropdown-menu">
+                <a href="#" class="dropdown-item" data-url="pi-01">P/I 01</a>
+                <a href="#" class="dropdown-item" data-url="pi-02">P/I 02</a>
+                <a href="#" class="dropdown-item" data-url="pi-staging">P/I Staging</a>
+            </div>
+        </li>
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#">Application
+                <span class="caret"></span></a>
+
+            <div class="dropdown-menu">
+                <a href="#" class="dropdown-item" data-url="dev1">Dev 1</a>
+                <a href="#" class="dropdown-item" data-url="dev2">Dev 2</a>
+				<a href="#" class="dropdown-item" data-url="dev-api">Dev API</a>
+            </div>
+        </li>
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#">SQL
+                <span class="caret"></span></a>
+
+            <div class="dropdown-menu">
+                <a href="#" class="dropdown-item" data-url="sql-01">SQL 01</a>
+                <a href="#" class="dropdown-item" data-url="sql-02">SQL 02</a>
+                <a href="#" class="dropdown-item" data-url="sql-staging">SQL Staging</a>
+                <a href="#" class="dropdown-item" data-url="old-sql-01">SQL 01 (Old website)</a>
+                <a href="#" class="dropdown-item" data-url="old-sql-02">SQL 02 (Old website)</a>
+                <a href="#" class="dropdown-item" data-url="old-sql-staging">SQL Staging (Old website)</a>
+            </div>
+        </li>
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#">OFMA
+                <span class="caret"></span></a>
+
+            <div class="dropdown-menu">
+                <a href="#" class="dropdown-item" data-url="ofma">OFMA</a>
+                <a href="#" class="dropdown-item" data-url="ofma-staging">OFMA Staging</a>
+                <a href="#" class="dropdown-item" data-url="ofma-admin">OFMA Admin</a>
+                <a href="#" class="dropdown-item" data-url="ofma-admin-staging">OFMA Staging Admin</a>
+            </div>
+        </li>
+    </ul>
+</nav>
+<div class="content">
+    <div class="inner homeContent">
+        <h1>Galaxy</h1>
+
+        <p style="font-weight: 400" class="lead"><b>Galaxy</b>, is a common platform for <b>RelayHub</b>, where we can
+            easily stream any log or do manipulation with file system, on any RelayHub Dev server. We could also access CouchDB server through it.</p>
+		<p>Found any issue, Contact <a href="mailto:sanket.bajoria@pb.com?Subject=Galaxy Issue" target="_top">@me</a></p>
+    </div>
+	<footer class="footer">
+		<span><b>Galaxy</b> for <b>RelayHub</b>, by <a href="https://in.linkedin.com/in/sanket-bajoria-5527271a" target="_blank">@Sanket Bajoria</a><span><br/>
+	</footer>
+</div>
+<iframe class="content" style="display:none;width:100%;"></iframe>
+</body>
+
+</html>

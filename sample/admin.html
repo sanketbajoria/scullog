@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html ng-app="galaxy">
+
+  <head>
+    <link data-require="bootstrap@4.0.0-alpha.2" data-semver="4.0.0-alpha.2" rel="stylesheet" href="https://cdn.rawgit.com/twbs/bootstrap/v4-dev/dist/css/bootstrap.min.css" />
+    <script data-require="jquery@2.2.0" data-semver="2.2.0" src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.3.4/js/tether.min.js"></script>
+    <script data-require="bootstrap@4.0.0-alpha.2" data-semver="4.0.0-alpha.2" src="https://cdn.rawgit.com/twbs/bootstrap/v4-dev/dist/js/bootstrap.min.js"></script>
+    <script data-require="angular.js@1.5.8" data-semver="1.5.8" src="https://code.angularjs.org/1.5.8/angular.js"></script>
+    <style>
+        body, html {
+            margin: 0px;
+            padding: 0px;
+            overflow-y: hidden;
+        }
+
+        .content {
+            border: none;
+            width: 100%;
+        }
+
+        .loading {
+            position: absolute;
+            background-color: gray;
+            opacity: 0.5;
+            z-index: 9999;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+        }
+
+        .loading div {
+            position: absolute;
+            top: 50%;
+            text-align: center;
+            left: 50%;
+            margin-top: -60px;
+            margin-left: -30px;
+        }
+
+        .homeContent {
+            top: 20%;
+            position: absolute;
+            margin-left: 10%;
+            margin-right: 10%;
+            margin-top: -60px;
+            width: 80%;
+            text-align: center;
+        }
+
+        .navbar {
+            border-radius: 0px;
+            padding-top: 2px;
+            padding-bottom: 2px;
+        }
+    </style>
+    <script src="script.js"></script>
+    <script type="application/javascript">
+       // Code goes here
+
+		var app = angular.module('galaxy',[]);
+
+		app.controller('main', main)
+
+		function main($http){
+		  var vm = this;
+		  
+		   var mmap = {
+					"dev1": "http://localhost:7061",
+					"dev2": "http://localhost:7062",
+					"dev-api": "http://localhost:7063",
+					"pi-01": "http://localhost:7071",
+					"pi-02": "http://localhost:7072",
+					"pi-staging": "http://localhost:7073"
+				}
+		  vm.servers = Object.keys(mmap).map(function(m){
+			return {name: m, url: mmap[m]};
+		  });
+		  vm.version = function(idx){
+			var s = vm.servers[idx];
+			$http.get(s.url+"/version").success(function(data){
+			  s.response = data;
+			}).error(function(data){
+			  s.response = data;
+			})
+		  }
+		  vm.restart = function(idx){
+            var s = vm.servers[idx];
+            $http.get(s.url+"/restartFM").success(function(data){
+                s.response = data;
+            }).error(function(data){
+                s.response = data;
+            })
+        }
+        vm.update = function(idx){
+            var s = vm.servers[idx];
+            $http.get(s.url+"/updateFM").success(function(data){
+                s.response = data;
+            }).error(function(data){
+                s.response = data;
+            })
+        }
+
+        vm.forceUpdate = function(idx){
+            var s = vm.servers[idx];
+            $http.get(s.url+"/updateFM?forceUpgrade=true").success(function(data){
+                s.response = data;
+            }).error(function(data){
+                s.response = data;
+            })
+        }
+		}
+        
+    </script>
+  </head>
+
+  <body ng-controller="main as vm">
+    <nav class="navbar navbar-dark bg-inverse">
+      <div class="navbar-header" style="float:left;margin-left:160px;">
+        <a class="navbar-brand" href="#" data-url="home">Galaxy Admin</a>
+      </div>
+    </nav>
+    <div class="content">
+      <div class="inner homeContent">
+        
+        <table class="table">
+          <thead>
+            <tr>
+              <th style="width:10%;">#</th>
+              <th style="width:20%;">Server</th>
+              <th style="width:30%;">Action</th>
+              <th style="width:40%;">Response</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="text-align:left;" ng-repeat="server in vm.servers track by $index">
+              <td>{{$index + 1}}</td>
+              <td>{{server.name}}</td>
+              <td><button class="btn btn-primary" ng-click="vm.version($index)">Version</button>
+			  <button class="btn btn-primary" ng-click="vm.restart($index)">Restart</button>
+              <button class="btn btn-primary" ng-click="vm.update($index)">Update</button>
+              <button class="btn btn-primary" ng-click="vm.forceUpdate($index)">Force Update</button>
+              </td>
+              <td>{{server.response}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </body>
+
+</html>
